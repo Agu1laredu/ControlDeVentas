@@ -1,0 +1,42 @@
+.Navbar {
+  background-color: #242527;
+  display: grid;
+  height: 800px;
+  width: 150px;
+  text-align: justify;
+  position: absolute;
+  left: 2%;
+  top: 2%;
+  border-radius: 20px;
+}
+
+#Logo {
+  color: #b4b5b7;
+  position: relative;
+  top: -200px;
+  margin: auto;
+}
+
+.LogoImagen {
+  width: 100px;
+  border-radius: 20px;
+}
+
+.Links {
+  height: 50px;
+  margin: 10px;
+  font-size: 20px;
+  text-align: justify;
+  color: #e6e7e9;
+}
+
+.Links:hover {
+  height: 50px;
+  margin: 10px;
+  transition: 1s;
+}
+
+.Links:focus {
+  transition: 1s;
+  color: #685cfe;
+}

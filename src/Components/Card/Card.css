@@ -1,0 +1,19 @@
+.Card {
+  width: 100vw;
+  height: 30vh;
+  margin: 10px;
+  border-radius: 20px;
+  font-family: "Bolder";
+  text-align: center;
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.3);
+}
+
+.Card:hover {
+  transition: 1s;
+  box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.AbrigoImg {
+  width: 150px;
+}
