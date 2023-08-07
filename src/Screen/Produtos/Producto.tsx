@@ -79,7 +79,7 @@ function Productos() {
   useEffect(() => {
     // No es necesario cargar los productos nuevamente al montar el componente, ya que esto se hace automáticamente en el constructor de ProductManager
     setProducts(productManager.getProducts());
-  }, []);
+  }, [{ productManager }]);
 
   // Función para manejar el envío del formulario de agregar/editar producto
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
