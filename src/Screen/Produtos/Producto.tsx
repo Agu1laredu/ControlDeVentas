@@ -214,8 +214,7 @@ function Productos() {
                 <thead>
                   <tr>
                     <th>#</th>
-
-                    <th>{product.name}e</th>
+                    <th>{product.name}</th>
                     <th>{product.Talle}</th>
                     <th>${product.price}</th>
                     <div
