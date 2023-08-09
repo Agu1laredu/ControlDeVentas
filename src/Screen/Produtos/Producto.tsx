@@ -136,7 +136,6 @@ function Productos() {
           style={{
             padding: "20px",
             margin: "auto",
-            border: "2px solid black",
             display: "flex",
             borderRadius: "20px",
             textAlign: "center",
@@ -191,7 +190,6 @@ function Productos() {
               position: "relative",
               margin: "auto",
               top: "30px",
-              border: "2px solid black",
               width: "100%",
               padding: "20px",
               borderRadius: "20px",
