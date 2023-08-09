@@ -120,9 +120,17 @@ function Clientes() {
     setCurrentProduct(product);
   };
   return (
-    <div style={{ display: "flex" }}>
+    <div
+      style={{
+        display: "flex",
+        width: "120%",
+        margin: "auto 20px",
+      }}
+    >
       <Sidebar />
-      <section>
+      <section
+        style={{ width: "100%", border: "2px solid #242527", padding: 50 }}
+      >
         <h1>Clientes</h1>
 
         {/* Formulario para agregar/editar productos */}
@@ -135,17 +143,12 @@ function Clientes() {
             display: "flex",
             borderRadius: "20px",
             textAlign: "center",
-            width: "60%",
+            width: "100%",
           }}
         >
-          <div
-            style={{
-              textAlign: "center",
-              margin: "auto 2px",
-            }}
-          >
+          <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="name">
-              <b style={{ fontSize: 20, fontWeight: "50px" }}> Nombre:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Nombre:</b>
             </label>
             <input
               type="text"
@@ -162,7 +165,7 @@ function Clientes() {
             }}
           >
             <label htmlFor="name">
-              <b style={{ fontSize: 20, fontWeight: "50px" }}> Apelido:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Apellido:</b>
             </label>
             <input
               type="text"
@@ -178,7 +181,7 @@ function Clientes() {
             }}
           >
             <label htmlFor="Telefono">
-              <b style={{ fontSize: 20, fontWeight: "50px" }}> Telefono:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Telefono:</b>
             </label>
             <input
               type="number"
@@ -205,10 +208,10 @@ function Clientes() {
               key={product.id}
               style={{
                 position: "relative",
-                left: "22%",
+                margin: "auto",
                 top: "30px",
                 border: "2px solid black",
-                width: "800px",
+                width: "100%",
                 padding: "20px",
                 borderRadius: "20px",
               }}
@@ -220,11 +223,7 @@ function Clientes() {
                     <th>{product.name}</th>
                     <th>{product.Apellido}</th>
                     <th>{product.Telefono}</th>
-                    <div
-                      style={{
-                        margin: "auto",
-                      }}
-                    >
+                    <div style={{ display: "flex", justifyContent: "center" }}>
                       <button
                         onClick={() => handleEditProduct(product)}
                         style={{

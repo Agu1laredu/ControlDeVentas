@@ -121,9 +121,18 @@ function Productos() {
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div
+      style={{
+        display: "flex",
+        width: "120%",
+        margin: "auto 20px",
+      }}
+    >
       <Sidebar />
-      <section style={{ width: "90%" }}>
+
+      <section
+        style={{ width: "110%", border: "2px solid #242527", padding: 50 }}
+      >
         <h1>Productos</h1>
 
         {/* Formulario para agregar/editar productos */}
@@ -136,7 +145,7 @@ function Productos() {
             display: "flex",
             borderRadius: "20px",
             textAlign: "center",
-            width: "99%",
+            width: "100%",
           }}
         >
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
@@ -232,8 +241,17 @@ function Productos() {
         ))}
 
         {/* Mostrar el total de precios de los productos */}
-        <div style={{ textAlign: "center", margin: "30px auto" }}>
-          <h2>Total de precios: ${getTotalPrice()}</h2>
+        <div
+          style={{
+            textAlign: "center",
+            margin: "200px auto",
+            fontFamily: "Bolder",
+          }}
+        >
+          <h2>
+            Total de precios:
+            <span style={{ color: "green" }}>${getTotalPrice()}</span>
+          </h2>
         </div>
       </section>
     </div>
