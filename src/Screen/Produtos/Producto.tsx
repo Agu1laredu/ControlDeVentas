@@ -115,11 +115,6 @@ function Productos() {
     setCurrentProduct(product);
   };
 
-  // Función para obtener el total de precios de los productos agregados
-  const getTotalPrice = () => {
-    return productList.reduce((total, product) => total + product.price, 0);
-  };
-
   return (
     <div
       style={{
@@ -150,7 +145,7 @@ function Productos() {
         >
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="name">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Nombre:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Producto:</b>
             </label>
             <input
               type="text"
@@ -239,20 +234,6 @@ function Productos() {
             </Table>
           </div>
         ))}
-
-        {/* Mostrar el total de precios de los productos */}
-        <div
-          style={{
-            textAlign: "center",
-            margin: "200px auto",
-            fontFamily: "Bolder",
-          }}
-        >
-          <h2>
-            Total de precios:
-            <span style={{ color: "green" }}>${getTotalPrice()}</span>
-          </h2>
-        </div>
       </section>
     </div>
   );

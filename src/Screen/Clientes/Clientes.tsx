@@ -4,121 +4,127 @@ import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-interface Product {
+interface Clients {
   id: number;
-  name: string;
-  Telefono: number;
+  LastName: string;
   Apellido: string;
+  Telefono: number;
 }
 
-class ProductManager {
-  private cli: Product[];
+class ClientsManager {
+  private clients: Clients[];
   private nextId: number;
 
   constructor() {
-    this.cli = [];
+    this.clients = [];
     this.nextId = 1;
   }
-  savecliToLocalStorage(): void {
-    localStorage.setItem("cli", JSON.stringify(this.cli));
+
+  saveClientsToLocalStorage(): void {
+    localStorage.setItem("Clients", JSON.stringify(this.clients));
   }
 
-  loadcliFromLocalStorage(): void {
-    const cliData = localStorage.getItem("cli");
-    if (cliData) {
-      this.cli = JSON.parse(cliData);
+  loadClientsFromLocalStorage(): void {
+    const clientsData = localStorage.getItem("Clients");
+    if (clientsData) {
+      this.clients = JSON.parse(clientsData);
       this.nextId =
-        this.cli.reduce((maxId, product) => Math.max(maxId, product.id), 0) + 1;
+        this.clients.reduce(
+          (maxId, clients) => Math.max(maxId, clients.id),
+          0
+        ) + 1;
     }
   }
 
   // Agregar un nuevo producto
-  addProduct(name: string, Telefono: number, Apellido: string): void {
-    const newProduct: Product = {
+  addProduct(LastName: string, Apellido: string, Telefono: number): void {
+    const newProduct: Clients = {
       id: this.nextId,
-      name,
-      Telefono,
+      LastName,
       Apellido,
+      Telefono,
     };
 
-    this.cli.push(newProduct);
+    this.clients.push(newProduct);
     this.nextId++;
   }
 
   // Editar un producto existente por ID
   editProduct(
     id: number,
-    name: string,
-    Telefono: number,
-    Apellido: string
+    LastName: string,
+    Apellido: string,
+    Telefono: number
   ): void {
-    const index = this.cli.findIndex((product) => product.id === id);
+    const index = this.clients.findIndex((clients) => clients.id === id);
 
     if (index !== -1) {
-      this.cli[index].name = name;
-      this.cli[index].Telefono = Telefono;
-      this.cli[index].Apellido = Apellido;
+      this.clients[index].LastName = LastName;
+      this.clients[index].Apellido = Apellido;
+      this.clients[index].Telefono = Telefono;
     } else {
-      console.log("Producto no encontrado");
+      console.log("Clients no encontrado");
     }
   }
 
   // Eliminar un producto existente por ID
   deleteProduct(id: number): void {
-    this.cli = this.cli.filter((product) => product.id !== id);
+    this.clients = this.clients.filter((clients) => clients.id !== id);
   }
 
   // Obtener todos los productos
-  getcli(): Product[] {
-    return this.cli;
+  getProducts(): Clients[] {
+    return this.clients;
   }
 }
 
-function Clientes() {
-  const [cli, setClients] = useState<Product[]>([]);
-  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
-  const productManager = new ProductManager();
+function ClientsCode() {
+  const [clientList, setClientList] = useState<Clients[]>([]);
+  const [currentClient, setCurrentClient] = useState<Clients | null>(null);
+  const clientsManager = new ClientsManager();
 
   useEffect(() => {
-    // No es necesario cargar los productos nuevamente al montar el componente, ya que esto se hace automáticamente en el constructor de ProductManager
-    setClients(productManager.getcli());
+    clientsManager.loadClientsFromLocalStorage();
+    setClientList(clientsManager.getProducts());
   }, []);
 
   // Función para manejar el envío del formulario de agregar/editar producto
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (currentProduct) {
-      productManager.editProduct(
-        currentProduct.id,
-        currentProduct.name,
-        currentProduct.Telefono,
-        currentProduct.Apellido
+    const formData = new FormData(event.currentTarget);
+    const LastName = formData.get("LastName") as string;
+    const Apellido = formData.get("Apellido") as string;
+    const Telefono = parseFloat(formData.get("Telefono") as string);
+
+    if (currentClient) {
+      clientsManager.editProduct(
+        currentClient.id,
+        LastName,
+        Apellido,
+        Telefono
       );
-      setCurrentProduct(null);
+      setCurrentClient(null);
     } else {
-      const formData = new FormData(event.currentTarget);
-      const name = formData.get("name") as string;
-      const Telefono = parseFloat(formData.get("Telefono") as string);
-      const Apellido = formData.get("Apellido") as string;
-      productManager.addProduct(name, Telefono, Apellido);
+      clientsManager.addProduct(LastName, Apellido, Telefono);
     }
 
-    productManager.savecliToLocalStorage(); // Guardamos los productos en el localStorage
-    setClients(productManager.getcli());
+    clientsManager.saveClientsToLocalStorage(); // Guardamos los productos en el localStorage
+    setClientList(clientsManager.getProducts());
   };
 
   // Función para eliminar un producto
-  const handleDeleteClients = (id: number) => {
-    productManager.deleteProduct(id);
-    productManager.savecliToLocalStorage(); // Guardamos los productos en el localStorage
-    setClients(productManager.getcli());
+  const handleDeleteProduct = (id: number) => {
+    clientsManager.deleteProduct(id);
+    clientsManager.saveClientsToLocalStorage(); // Guardamos los productos en el localStorage
+    setClientList(clientsManager.getProducts());
   };
 
   // Función para editar un producto
-  const handleEditProduct = (product: Product) => {
-    setCurrentProduct(product);
+  const handleEditProduct = (clients: Clients) => {
+    setCurrentClient(clients);
   };
+
   return (
     <div
       style={{
@@ -128,8 +134,9 @@ function Clientes() {
       }}
     >
       <Sidebar />
+
       <section
-        style={{ width: "100%", border: "2px solid #242527", padding: 50 }}
+        style={{ width: "110%", border: "2px solid #242527", padding: 50 }}
       >
         <h1>Clientes</h1>
 
@@ -147,39 +154,29 @@ function Clientes() {
           }}
         >
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
-            <label htmlFor="name">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Nombre:</b>
+            <label htmlFor="LastName">
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Nombre :</b>
             </label>
             <input
               type="text"
-              name="name"
-              defaultValue={currentProduct?.name ?? ""}
+              name="LastName"
+              defaultValue={currentClient?.LastName ?? ""}
               required
             />
           </div>
 
-          <div
-            style={{
-              textAlign: "center",
-              margin: "auto 2px",
-            }}
-          >
-            <label htmlFor="name">
+          <div style={{ textAlign: "center", margin: "auto 2px" }}>
+            <label htmlFor="Apellido">
               <b style={{ fontSize: 20, fontWeight: "bold" }}> Apellido:</b>
             </label>
             <input
               type="text"
               name="Apellido"
-              defaultValue={currentProduct?.Apellido ?? ""}
+              defaultValue={currentClient?.Apellido ?? ""}
               required
             />
           </div>
-          <div
-            style={{
-              textAlign: "center",
-              margin: "auto 2px",
-            }}
-          >
+          <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="Telefono">
               <b style={{ fontSize: 20, fontWeight: "bold" }}> Telefono:</b>
             </label>
@@ -187,74 +184,69 @@ function Clientes() {
               type="number"
               name="Telefono"
               step="0.01"
-              defaultValue={currentProduct?.Telefono ?? ""}
+              defaultValue={currentClient?.Telefono ?? ""}
               required
             />
           </div>
-          <button
-            type="submit"
-            style={{
-              marginLeft: 100,
-            }}
-          >
-            {currentProduct ? "Editar Cliente" : "Agregar Cliente"}
+          <button type="submit" style={{ marginLeft: 100 }}>
+            {currentClient ? "Editar Producto" : "Agregar Producto"}
           </button>
         </form>
 
-        {/* Lista de productos */}
-        <ul>
-          {cli.map((product) => (
-            <div
-              key={product.id}
-              style={{
-                position: "relative",
-                margin: "auto",
-                top: "30px",
-                border: "2px solid black",
-                width: "100%",
-                padding: "20px",
-                borderRadius: "20px",
-              }}
-            >
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>{product.name}</th>
-                    <th>{product.Apellido}</th>
-                    <th>{product.Telefono}</th>
+        {/* Mostrar los productos agregados */}
+        {clientList.map((clients) => (
+          <div
+            key={clients.id}
+            style={{
+              position: "relative",
+              margin: "auto",
+              top: "30px",
+              border: "2px solid black",
+              width: "100%",
+              padding: "20px",
+              borderRadius: "20px",
+            }}
+          >
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>{clients.LastName}</th>
+                  <th>{clients.Apellido}</th>
+                  <th>{clients.Telefono}</th>
+                  <th>
                     <div style={{ display: "flex", justifyContent: "center" }}>
                       <button
-                        onClick={() => handleEditProduct(product)}
+                        onClick={() => handleEditProduct(clients)}
                         style={{
                           width: "100px",
                           fontSize: 10,
-                          fontWeight: "20px",
+                          fontWeight: "bold",
                         }}
                       >
                         Editar
                       </button>
                       <button
-                        onClick={() => handleDeleteClients(product.id)}
+                        onClick={() => handleDeleteProduct(clients.id)}
                         style={{
                           marginLeft: "20px",
                           width: "100px",
                           fontSize: 10,
-                          fontWeight: "20px",
+                          fontWeight: "bold",
                         }}
                       >
                         Eliminar
                       </button>
                     </div>
-                  </tr>
-                </thead>
-              </Table>
-            </div>
-          ))}
-        </ul>
+                  </th>
+                </tr>
+              </thead>
+            </Table>
+          </div>
+        ))}
       </section>
     </div>
   );
 }
 
-export default Clientes;
+export default ClientsCode;

@@ -13,8 +13,8 @@
 #Logo {
   color: #b4b5b7;
   position: relative;
-  top: -200px;
-  margin: auto;
+  top: -180px;
+  margin: auto 12px;
 }
 
 .LogoImagen {
