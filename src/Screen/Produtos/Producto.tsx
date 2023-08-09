@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
@@ -18,6 +19,7 @@ class ProductManager {
     this.products = [];
     this.nextId = 1;
   }
+
   saveProductsToLocalStorage(): void {
     localStorage.setItem("products", JSON.stringify(this.products));
   }
@@ -72,54 +74,56 @@ class ProductManager {
 }
 
 function Productos() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [productList, setProductList] = useState<Product[]>([]);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const productManager = new ProductManager();
 
   useEffect(() => {
-    // No es necesario cargar los productos nuevamente al montar el componente, ya que esto se hace automáticamente en el constructor de ProductManager
-    setProducts(productManager.getProducts());
-  }, [{ productManager }]);
+    productManager.loadProductsFromLocalStorage();
+    setProductList(productManager.getProducts());
+  }, []);
 
   // Función para manejar el envío del formulario de agregar/editar producto
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    const formData = new FormData(event.currentTarget);
+    const name = formData.get("name") as string;
+    const price = parseFloat(formData.get("price") as string);
+    const Talle = formData.get("Talle") as string;
+
     if (currentProduct) {
-      productManager.editProduct(
-        currentProduct.id,
-        currentProduct.name,
-        currentProduct.price,
-        currentProduct.Talle
-      );
+      productManager.editProduct(currentProduct.id, name, price, Talle);
       setCurrentProduct(null);
     } else {
-      const formData = new FormData(event.currentTarget);
-      const name = formData.get("name") as string;
-      const price = parseFloat(formData.get("price") as string);
-      const Talle = formData.get("Talle") as string;
       productManager.addProduct(name, price, Talle);
     }
 
     productManager.saveProductsToLocalStorage(); // Guardamos los productos en el localStorage
-    setProducts(productManager.getProducts());
+    setProductList(productManager.getProducts());
   };
 
   // Función para eliminar un producto
   const handleDeleteProduct = (id: number) => {
     productManager.deleteProduct(id);
     productManager.saveProductsToLocalStorage(); // Guardamos los productos en el localStorage
-    setProducts(productManager.getProducts());
+    setProductList(productManager.getProducts());
   };
 
   // Función para editar un producto
   const handleEditProduct = (product: Product) => {
     setCurrentProduct(product);
   };
+
+  // Función para obtener el total de precios de los productos agregados
+  const getTotalPrice = () => {
+    return productList.reduce((total, product) => total + product.price, 0);
+  };
+
   return (
     <div style={{ display: "flex" }}>
       <Sidebar />
-      <section>
+      <section style={{ width: "90%" }}>
         <h1>Productos</h1>
 
         {/* Formulario para agregar/editar productos */}
@@ -132,102 +136,78 @@ function Productos() {
             display: "flex",
             borderRadius: "20px",
             textAlign: "center",
-            width: "60%",
+            width: "99%",
           }}
         >
-          <div
-            style={{
-              textAlign: "center",
-              margin: "auto 2px",
-            }}
-          >
+          <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="name">
-              <b style={{ fontSize: 20, fontWeight: "50px" }}> Nombre:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Nombre:</b>
             </label>
             <input
               type="text"
               name="name"
-              defaultValue={currentProduct?.name || ""}
+              defaultValue={currentProduct?.name ?? ""}
               required
             />
           </div>
 
-          <div
-            style={{
-              textAlign: "center",
-              margin: "auto 2px",
-            }}
-          >
-            <label htmlFor="name">
-              <b style={{ fontSize: 20, fontWeight: "50px" }}> Talle:</b>
+          <div style={{ textAlign: "center", margin: "auto 2px" }}>
+            <label htmlFor="Talle">
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Talle:</b>
             </label>
             <input
               type="text"
               name="Talle"
-              defaultValue={currentProduct?.Talle || ""}
+              defaultValue={currentProduct?.Talle ?? ""}
               required
             />
           </div>
-          <div
-            style={{
-              textAlign: "center",
-              margin: "auto 2px",
-            }}
-          >
+          <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="price">
-              <b style={{ fontSize: 20, fontWeight: "50px" }}> Precio:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Precio:</b>
             </label>
             <input
               type="number"
               name="price"
               step="0.01"
-              defaultValue={currentProduct?.price || ""}
+              defaultValue={currentProduct?.price ?? ""}
               required
             />
           </div>
-          <button
-            type="submit"
-            style={{
-              marginLeft: 100,
-            }}
-          >
+          <button type="submit" style={{ marginLeft: 100 }}>
             {currentProduct ? "Editar Producto" : "Agregar Producto"}
           </button>
         </form>
 
-        {/* Lista de productos */}
-        <ul>
-          {products.map((product) => (
-            <div
-              key={product.id}
-              style={{
-                position: "relative",
-                left: "22%",
-                top: "30px",
-                border: "2px solid black",
-                width: "800px",
-                padding: "20px",
-                borderRadius: "20px",
-              }}
-            >
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>{product.name}</th>
-                    <th>{product.Talle}</th>
-                    <th>${product.price}</th>
-                    <div
-                      style={{
-                        margin: "auto",
-                      }}
-                    >
+        {/* Mostrar los productos agregados */}
+        {productList.map((product) => (
+          <div
+            key={product.id}
+            style={{
+              position: "relative",
+              margin: "auto",
+              top: "30px",
+              border: "2px solid black",
+              width: "100%",
+              padding: "20px",
+              borderRadius: "20px",
+            }}
+          >
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>{product.name}</th>
+                  <th>{product.Talle}</th>
+                  <th>${product.price}</th>
+                  <th>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
                       <button
                         onClick={() => handleEditProduct(product)}
                         style={{
                           width: "100px",
                           fontSize: 10,
-                          fontWeight: "20px",
+                          fontWeight: "bold",
                         }}
                       >
                         Editar
@@ -238,18 +218,23 @@ function Productos() {
                           marginLeft: "20px",
                           width: "100px",
                           fontSize: 10,
-                          fontWeight: "20px",
+                          fontWeight: "bold",
                         }}
                       >
                         Eliminar
                       </button>
                     </div>
-                  </tr>
-                </thead>
-              </Table>
-            </div>
-          ))}
-        </ul>
+                  </th>
+                </tr>
+              </thead>
+            </Table>
+          </div>
+        ))}
+
+        {/* Mostrar el total de precios de los productos */}
+        <div style={{ textAlign: "center", margin: "30px auto" }}>
+          <h2>Total de precios: ${getTotalPrice()}</h2>
+        </div>
       </section>
     </div>
   );

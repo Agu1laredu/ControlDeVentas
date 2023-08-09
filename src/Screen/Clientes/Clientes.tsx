@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
@@ -149,7 +150,7 @@ function Clientes() {
             <input
               type="text"
               name="name"
-              defaultValue={currentProduct?.name || ""}
+              defaultValue={currentProduct?.name ?? ""}
               required
             />
           </div>
@@ -166,7 +167,7 @@ function Clientes() {
             <input
               type="text"
               name="Apellido"
-              defaultValue={currentProduct?.Apellido || ""}
+              defaultValue={currentProduct?.Apellido ?? ""}
               required
             />
           </div>
@@ -183,7 +184,7 @@ function Clientes() {
               type="number"
               name="Telefono"
               step="0.01"
-              defaultValue={currentProduct?.Telefono || ""}
+              defaultValue={currentProduct?.Telefono ?? ""}
               required
             />
           </div>
