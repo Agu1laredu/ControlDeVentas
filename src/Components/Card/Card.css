@@ -1,6 +1,6 @@
 .Card {
-  width: 100vw;
-  height: 30vh;
+  width: 100%;
+  height: 35vh;
   margin: 10px;
   border-radius: 20px;
   font-family: "Bolder";
@@ -15,5 +15,27 @@
 }
 
 .AbrigoImg {
-  width: 150px;
+  width: 50%;
+  margin: auto;
+}
+
+@media (max-width: 700px) {
+  .AbrigoImg {
+    width: 40%;
+    margin: auto;
+  }
+
+  .Card {
+    width: 100%;
+    height: 40vh;
+    gap: 20px;
+    margin-top: 10%;
+  }
+}
+
+@media (max-width: 500px) {
+  .AbrigoImg {
+    width: 50%;
+    margin: auto;
+  }
 }

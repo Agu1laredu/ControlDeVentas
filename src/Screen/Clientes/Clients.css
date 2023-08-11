@@ -1,0 +1,21 @@
+.FormClients {
+  display: flex;
+  padding: 20px;
+  margin: auto;
+  border-radius: 20px;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .FormClients {
+    display: grid;
+    width: 50%;
+  }
+  .ButtonEditar {
+    width: 100%;
+    margin: auto;
+    position: relative;
+    left: -50%;
+    top: 20%;
+  }
+}

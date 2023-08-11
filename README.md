@@ -33,4 +33,9 @@
 - [Interacción-De-Venta] :  se debera crear drowpdowns donde se puedan buscar tanto los productos como los clientes para elegir que cliente realiza la compra y que producto esta comprando y sus cantidades, en base a este suceso se crea el registro al cliente sumandoselo en su historial y en nuestro registro y a la vez sumando los montos de lo vendido a nuestro registro final del mes 
 
 
+# Para levantar el proyecto sigue el siguiente proceso: 
+- clonar el repositorio
+- yarn install 
+- yarn run dev 
+
 

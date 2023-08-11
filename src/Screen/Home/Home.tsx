@@ -36,26 +36,24 @@ function Home() {
   ];
 
   return (
-    <div style={{ display: "grid" }}>
-      <div style={{ display: "flex" }}>
-        <Sidebar />
-        <section>
-          <h1>Control de Ventas</h1>
-          <div style={{ display: "flex" }}>
-            {/* Mapea cada elemento de infoCard y pasa la información a Card */}
-            {infoCard.map((item, index) => (
-              <Card
-                key={index}
-                title={item.title}
-                text={item.text}
-                img={item.img}
-              />
-            ))}
-          </div>
-          <Banner />
-          {/* <h2>Controla tus ventas de manera eficiente</h2> */}
-        </section>
-      </div>
+    <div style={{ display: "flex" }}>
+      <Sidebar />
+      <section>
+        <h1>Control de Ventas</h1>
+        <div className="CardContainer">
+          {/* Mapea cada elemento de infoCard y pasa la información a Card */}
+          {infoCard.map((item, index) => (
+            <Card
+              key={index}
+              title={item.title}
+              text={item.text}
+              img={item.img}
+            />
+          ))}
+        </div>
+        <Banner />
+        {/* <h2>Controla tus ventas de manera eficiente</h2> */}
+      </section>
     </div>
   );
 }

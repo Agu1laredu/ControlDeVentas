@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
+import "./Producto.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 interface Product {
@@ -119,32 +120,19 @@ function Productos() {
     <div
       style={{
         display: "flex",
-        width: "120%",
         margin: "auto 20px",
       }}
     >
       <Sidebar />
 
-      <section
-        style={{ width: "110%", border: "2px solid #242527", padding: 50 }}
-      >
+      <section style={{ border: "2px solid #242527", padding: 50 }}>
         <h1>Productos</h1>
 
         {/* Formulario para agregar/editar productos */}
-        <form
-          onSubmit={handleFormSubmit}
-          style={{
-            padding: "20px",
-            margin: "auto",
-            display: "flex",
-            borderRadius: "20px",
-            textAlign: "center",
-            width: "100%",
-          }}
-        >
+        <form onSubmit={handleFormSubmit} className="FormProduct">
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="name">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Producto:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Producto :</b>
             </label>
             <input
               type="text"
@@ -156,7 +144,7 @@ function Productos() {
 
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="Talle">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Talle:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Talle :</b>
             </label>
             <input
               type="text"
@@ -167,7 +155,7 @@ function Productos() {
           </div>
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="price">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Precio:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Precio :</b>
             </label>
             <input
               type="number"
@@ -177,7 +165,11 @@ function Productos() {
               required
             />
           </div>
-          <button type="submit" style={{ marginLeft: 100 }}>
+          <button
+            className="ButtonEditar"
+            type="submit"
+            style={{ marginLeft: 100 }}
+          >
             {currentProduct ? "Editar Producto" : "Agregar Producto"}
           </button>
         </form>
@@ -203,7 +195,10 @@ function Productos() {
                   <th>{product.Talle}</th>
                   <th>${product.price}</th>
                   <th>
-                    <div style={{ display: "flex", justifyContent: "center" }}>
+                    <div
+                      className="ContainerItem"
+                      style={{ display: "flex", justifyContent: "center" }}
+                    >
                       <button
                         onClick={() => handleEditProduct(product)}
                         style={{

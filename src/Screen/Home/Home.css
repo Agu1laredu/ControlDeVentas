@@ -15,3 +15,16 @@ h2 {
   margin: 30px;
   font-family: "Bolder";
 }
+
+.CardContainer {
+  display: flex;
+}
+
+@media (max-width: 700px) {
+  .CardContainer {
+    display: grid;
+  }
+  section {
+    margin-left: 20px;
+  }
+}

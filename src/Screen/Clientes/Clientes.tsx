@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
+import "./Clients.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 interface Clients {
@@ -129,32 +130,19 @@ function ClientsCode() {
     <div
       style={{
         display: "flex",
-        width: "120%",
         margin: "auto 20px",
       }}
     >
       <Sidebar />
 
-      <section
-        style={{ width: "110%", border: "2px solid #242527", padding: 50 }}
-      >
+      <section style={{ border: "2px solid #242527", padding: 50 }}>
         <h1>Clientes</h1>
 
         {/* Formulario para agregar/editar productos */}
-        <form
-          onSubmit={handleFormSubmit}
-          style={{
-            padding: "20px",
-            margin: "auto",
-            display: "flex",
-            borderRadius: "20px",
-            textAlign: "center",
-            width: "100%",
-          }}
-        >
+        <form onSubmit={handleFormSubmit} className="FormClients">
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="LastName">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Nombre :</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Nombre : </b>
             </label>
             <input
               type="text"
@@ -166,7 +154,7 @@ function ClientsCode() {
 
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="Apellido">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Apellido:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Apellido : </b>
             </label>
             <input
               type="text"
@@ -177,7 +165,7 @@ function ClientsCode() {
           </div>
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="Telefono">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Telefono:</b>
+              <b style={{ fontSize: 20, fontWeight: "bold" }}> Telefono : </b>
             </label>
             <input
               type="number"
@@ -187,8 +175,12 @@ function ClientsCode() {
               required
             />
           </div>
-          <button type="submit" style={{ marginLeft: 100 }}>
-            {currentClient ? "Editar Producto" : "Agregar Producto"}
+          <button
+            className="ButtonEditar"
+            type="submit"
+            style={{ marginLeft: 100 }}
+          >
+            {currentClient ? "Editar Cliente" : "Agregar Cliente"}
           </button>
         </form>
 
