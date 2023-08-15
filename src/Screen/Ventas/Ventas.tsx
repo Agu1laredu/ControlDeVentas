@@ -3,8 +3,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Dropdown from "./Components/DrowpDown/Dropdown ";
-
+import DropdownComponent from "./Components/DrowpDown/Dropdown ";
 interface Ventas {
   id: number;
   cliente: string;
@@ -124,6 +123,30 @@ function VentasRealizadas() {
     setCurrentProduct(product);
   };
 
+  // Luego en tu componente App, donde tienes los arrays de Clientes y Productos:
+  const Clientes = [
+    {
+      name: "Hector",
+    },
+    {
+      name: "Hugo",
+    },
+    {
+      name: "Jeronimo",
+    },
+  ];
+
+  const Productos = [
+    {
+      name: "Buzos Esc Oroño",
+    },
+    {
+      name: "Remeras Maxi kiosco",
+    },
+    {
+      name: "Camperas Colores Primarios",
+    },
+  ];
   return (
     <div
       style={{
@@ -134,28 +157,26 @@ function VentasRealizadas() {
       <Sidebar />
 
       <section style={{ border: "2px solid #242527", padding: 50 }}>
-        <h1>Ventas</h1>
+        <h1>VENTAS</h1>
 
         {/* Formulario para agregar/editar productos */}
         <form onSubmit={handleFormSubmit} className="FormProduct">
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
-            <label htmlFor="cliente">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Cliente </b>
-            </label>
-            <Dropdown />
+            <label htmlFor="cliente"></label>
+            <DropdownComponent title="Clientes" options={Clientes} />
           </div>
 
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
-            <label htmlFor="pruducto">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Producto </b>
-            </label>
-            <Dropdown />
+            <label htmlFor="producto"></label>
+            <DropdownComponent title="Productos" options={Productos} />
           </div>
+
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="cantidad">
               <b style={{ fontSize: 20, fontWeight: "bold" }}> Cantidad :</b>
             </label>
             <input
+              style={{ width: "80px", height: "50px", marginLeft: "20px" }}
               type="number"
               name="cantidad"
               step="0.01"
@@ -164,9 +185,8 @@ function VentasRealizadas() {
             />
           </div>
           <button
-            className="ButtonEditar"
             type="submit"
-            style={{ marginLeft: 100 }}
+            style={{ margin: " auto 50px", width: "150px", height: "45px" }}
           >
             {currentProduct ? "Editar Venta" : "Agregar Venta"}
           </button>

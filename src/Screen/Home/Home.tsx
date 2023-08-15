@@ -39,7 +39,7 @@ function Home() {
     <div style={{ display: "flex" }}>
       <Sidebar />
       <section>
-        <h1>Control de Ventas</h1>
+        <h1>CONTROL DE VENTAS</h1>
         <div className="CardContainer">
           {/* Mapea cada elemento de infoCard y pasa la información a Card */}
           {infoCard.map((item, index) => (

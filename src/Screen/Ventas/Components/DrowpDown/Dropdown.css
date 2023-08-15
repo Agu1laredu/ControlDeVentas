@@ -1,9 +1,10 @@
 .dropdown {
-  background-color: gray;
+  margin: 20px;
+  padding: 4px;
 }
 
 .Ejemplos {
-  border-bottom: 2px solid gray;
+  border-bottom: 2px solid #685cfe;
   text-align: center;
   padding-bottom: 10px;
 }

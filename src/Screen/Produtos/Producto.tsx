@@ -126,7 +126,7 @@ function Productos() {
       <Sidebar />
 
       <section style={{ border: "2px solid #242527", padding: 50 }}>
-        <h1>Productos</h1>
+        <h1>PRODUCTOS</h1>
 
         {/* Formulario para agregar/editar productos */}
         <form onSubmit={handleFormSubmit} className="FormProduct">

@@ -1,36 +1,31 @@
+import React from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import "./Dropdown.css";
-function VariantsExample() {
-  return (
-    <>
-      {["Lista"].map((variant) => (
-        <DropdownButton
-          as={ButtonGroup}
-          className="dropdown"
-          name="Clientes"
-          key={variant}
-          id={`dropdown-variants-${variant}`}
-          variant={variant.toLowerCase()}
-          title={variant}
-        >
-          <Dropdown.Item eventKey="1">
-            <p className="Ejemplos">Ejemplo 1</p>
-          </Dropdown.Item>
-          <Dropdown.Item eventKey="2">
-            <p className="Ejemplos">Ejemplo 2</p>
-          </Dropdown.Item>
-          <Dropdown.Item eventKey="3">
-            <p className="Ejemplos">Ejemplo 3</p>
-          </Dropdown.Item>
-          <Dropdown.Item eventKey="4">
-            <p className="Ejemplos">Ejemplo 4</p>
-          </Dropdown.Item>
-        </DropdownButton>
-      ))}
-    </>
-  );
+
+interface DropdownProps {
+  title: string;
+  options: { name: string }[];
 }
 
-export default VariantsExample;
+const DropdownComponent: React.FC<DropdownProps> = ({ title, options }) => {
+  return (
+    <DropdownButton
+      as={ButtonGroup}
+      className="dropdown"
+      key={title}
+      id={`dropdown-variants-${title}`}
+      variant={title.toLowerCase()}
+      title={title}
+    >
+      {options.map((option, index) => (
+        <Dropdown.Item key={index} eventKey={String(index + 1)}>
+          <p className="Ejemplos">{option.name}</p>
+        </Dropdown.Item>
+      ))}
+    </DropdownButton>
+  );
+};
+
+export default DropdownComponent;
