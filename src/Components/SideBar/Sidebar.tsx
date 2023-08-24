@@ -20,7 +20,7 @@ function BasicExample() {
             <Link to={`/`} className="Links">
               Inicio
             </Link>
-            <Link to={`/Produtos`} className="Links">
+            <Link to={`/Productos`} className="Links">
               Productos
             </Link>
             <Link to={`/Clientes`} className="Links">

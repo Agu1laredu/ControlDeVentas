@@ -1,13 +1,19 @@
+// import { useEffect } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Sidebar from "./Components/SideBar/Sidebar.tsx";
-import Home from "./Screen/Home/Home.tsx";
+import Login from "./Screen/Login/Login.tsx";
+// import client from "./supabase/client.tsx";
 
 function App() {
+  // useEffect(() => {
+  //   client.auth.onauthStateChange((event, session) => {
+  //     console.log(event, session);
+  //   });
+  // }, []);
+
   return (
     <div style={{ display: "flex" }}>
-      <Sidebar />
-      <Home />
+      <Login />
     </div>
   );
 }

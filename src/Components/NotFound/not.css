@@ -1,0 +1,31 @@
+#notfound {
+  width: 80vw;
+  height: 80vh;
+  overflow: hidden;
+}
+
+#CardNotFound {
+  background: rgb(81, 74, 175);
+  background: linear-gradient(
+    90deg,
+    rgba(81, 74, 175, 1) 0%,
+    rgba(61, 58, 105, 1) 100%,
+    rgba(157, 166, 47, 1) 100%,
+    rgba(236, 255, 0, 1) 100%,
+    rgba(176, 31, 31, 1) 100%
+  );
+  z-index: 3;
+}
+
+#CardNotFound2 {
+  background: rgb(81, 74, 175);
+  background: linear-gradient(
+    90deg,
+    rgba(81, 74, 175, 1) 0%,
+    rgba(61, 58, 105, 1) 100%,
+    rgba(157, 166, 47, 1) 100%,
+    rgba(236, 255, 0, 1) 100%,
+    rgba(176, 31, 31, 1) 100%
+  );
+  z-index: 1;
+}
