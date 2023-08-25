@@ -1,8 +1,10 @@
 import { useState, useEffect, FormEvent } from "react";
 import { client } from "../../supabase/client.tsx";
-import Logo from "../../assets/LogoVentas.png";
-import "./Login.css";
 import { useNavigate } from "react-router-dom";
+
+import Logo from "../../assets/LogoVentas.png";
+
+import "./Login.css";
 
 function Login() {
   const [email, setEmail] = useState<string>("");
@@ -10,23 +12,28 @@ function Login() {
   const [error, setError] = useState<string | null>(null); // Estado para manejar errores
   const navigate = useNavigate();
 
+  const registerUser = async (email: string, password: string) => {
+    const { error } = await client.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      throw error;
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
-      const { error } = await client.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // Llama a la función de registro de usuario
+      await registerUser(email, password);
 
-      if (error) {
-        throw error;
-      }
-
-      // El inicio de sesión fue exitoso, redirige al usuario a la página de inicio
-      navigate("/");
+      // Registro exitoso, redirige al usuario a la página de inicio
+      navigate("/"); // Cambia la redirección según tus necesidades
     } catch (error) {
-      setError("Error al iniciar sesión. Verifica tus credenciales."); // Manejar el error
+      setError("Error al registrar usuario. Verifica tus credenciales."); // Maneja el error
     }
   };
 
@@ -36,6 +43,8 @@ function Login() {
 
       if (!user) {
         navigate("/"); // Usuario autenticado, redirigir a la página de inicio
+      } else {
+        navigate("/Login");
       }
     };
 
