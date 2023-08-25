@@ -1,11 +1,14 @@
-import { useState, FormEvent } from "react";
-import { client } from "../../supabase/client.js";
+import { useState, useEffect, FormEvent } from "react";
+import { client } from "../../supabase/client.tsx";
 import Logo from "../../assets/LogoVentas.png";
 import "./Login.css";
+import { useNavigate } from "react-router-dom";
+
 function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null); // Estado para manejar errores
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -20,12 +23,24 @@ function Login() {
         throw error;
       }
 
-      // El inicio de sesión fue exitoso, redirige al usuario a la página de inicio, por ejemplo.
-      // Puedes agregar esta lógica aquí.
+      // El inicio de sesión fue exitoso, redirige al usuario a la página de inicio
+      navigate("/");
     } catch (error) {
       setError("Error al iniciar sesión. Verifica tus credenciales."); // Manejar el error
     }
   };
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const user = await client.auth.getUser();
+
+      if (!user) {
+        navigate("/"); // Usuario autenticado, redirigir a la página de inicio
+      }
+    };
+
+    checkUser();
+  }, [navigate]);
 
   return (
     <div style={{ display: "flex" }}>
