@@ -4,6 +4,69 @@ import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
 import "bootstrap/dist/css/bootstrap.min.css";
 import DropdownComponent from "./Components/DrowpDown/Dropdown ";
+
+import ButtonSend from "../../Components/Button/Button";
+import styled from "styled-components";
+
+import "bootstrap/dist/css/bootstrap.min.css";
+
+const Formproduct = styled.form`
+  padding: 20px;
+  margin: auto;
+  display: flex;
+  border-radius: 20px;
+  text-align: center;
+
+  @media (max-width: 700px) {
+    display: grid;
+    width: 50%;
+  }
+`;
+
+const Section = styled.section`
+  margin-left: 100px;
+  border: 2px solid #242527;
+  padding: 50px;
+  width: 80vw;
+  border-radius: 15px;
+`;
+
+const ButtonEditar = styled.button`
+  margin-left: 100px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #646cff;
+  cursor: pointer;
+  transition: border-color 0.25s;
+
+  :hover {
+    border-color: #646cff;
+  }
+  :focus,
+  :focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+  @media (max-width: 700px) {
+    width: 100%;
+    margin: auto;
+    position: relative;
+    left: -50%;
+    top: 20%;
+  }
+`;
+const TablaContainer = styled.div`
+  position: relative;
+  margin: auto;
+  top: 30px;
+  width: 100%;
+  padding: 20px;
+  borderradius: 20px;
+`;
+
 interface Ventas {
   id: number;
   cliente: string;
@@ -156,11 +219,11 @@ function VentasRealizadas() {
     >
       <Sidebar />
 
-      <section style={{ border: "2px solid #242527", padding: 50 }}>
+      <Section>
         <h1>VENTAS</h1>
 
         {/* Formulario para agregar/editar productos */}
-        <form onSubmit={handleFormSubmit} className="FormProduct">
+        <Formproduct onSubmit={handleFormSubmit}>
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="cliente"></label>
             <DropdownComponent title="Clientes" options={Clientes} />
@@ -184,27 +247,14 @@ function VentasRealizadas() {
               required
             />
           </div>
-          <button
-            type="submit"
-            style={{ margin: " auto 50px", width: "150px", height: "45px" }}
-          >
-            {currentProduct ? "Editar Venta" : "Agregar Venta"}
-          </button>
-        </form>
+          <ButtonEditar type="submit">
+            {currentProduct ? "Editar Cliente" : "Agregar Cliente"}
+          </ButtonEditar>
+        </Formproduct>
 
         {/* Mostrar los productos agregados */}
         {productList.map((product) => (
-          <div
-            key={product.id}
-            style={{
-              position: "relative",
-              margin: "auto",
-              top: "30px",
-              width: "100%",
-              padding: "20px",
-              borderRadius: "20px",
-            }}
-          >
+          <TablaContainer key={product.id}>
             <Table striped bordered hover>
               <thead>
                 <tr>
@@ -217,35 +267,22 @@ function VentasRealizadas() {
                       className="ContainerItem"
                       style={{ display: "flex", justifyContent: "center" }}
                     >
-                      <button
-                        onClick={() => handleEditProduct(product)}
-                        style={{
-                          width: "100px",
-                          fontSize: 10,
-                          fontWeight: "bold",
-                        }}
-                      >
+                      <ButtonSend onClick={() => handleEditProduct(product)}>
                         Editar
-                      </button>
-                      <button
+                      </ButtonSend>
+                      <ButtonSend
                         onClick={() => handleDeleteProduct(product.id)}
-                        style={{
-                          marginLeft: "20px",
-                          width: "100px",
-                          fontSize: 10,
-                          fontWeight: "bold",
-                        }}
                       >
                         Eliminar
-                      </button>
+                      </ButtonSend>
                     </div>
                   </th>
                 </tr>
               </thead>
             </Table>
-          </div>
+          </TablaContainer>
         ))}
-      </section>
+      </Section>
     </div>
   );
 }
