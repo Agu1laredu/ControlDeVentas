@@ -1,10 +1,57 @@
 import { useState, useEffect, FormEvent } from "react";
 import { client } from "../../supabase/client.tsx";
 import { useNavigate } from "react-router-dom";
-
+import Button from "../../Components/Button/Button.tsx";
 import Logo from "../../assets/LogoVentas.png";
 
-import "./Login.css";
+import styled from "styled-components";
+
+const Banner = styled.div`
+  position: absolute;
+  top: 10px;
+  height: 98%;
+  width: 50%;
+  backgroundcolor: #1a1a1c;
+  border-radius: 5px;
+  border: 1px solid black;
+  background: rgb(81, 74, 175);
+  background: linear-gradient(
+    90deg,
+    rgba(81, 74, 175, 1) 0%,
+    rgba(61, 58, 105, 1) 100%,
+    rgba(157, 166, 47, 1) 100%,
+    rgba(236, 255, 0, 1) 100%,
+    rgba(176, 31, 31, 1) 100%
+  );
+`;
+
+const Tittle = styled.h4`
+  text-align: center;
+  margin-top: 50%;
+  font-family: Bolder;
+  font-size: 100px;
+  color: white;
+`;
+
+const Imagen = styled.img`
+  position: relative;
+  z-index: 3;
+  left: 1100px;
+  width: 100%;
+`;
+const Formulario = styled.form`
+  display: grid;
+  margin: 30px auto;
+  width: 50%;
+  height: 20%;
+  aligncontent: center;
+`;
+
+const InputLogins = styled.input`
+  width: 98%;
+  margin: 5px;
+  height: 50px;
+`;
 
 function Login() {
   const [email, setEmail] = useState<string>("");
@@ -54,90 +101,33 @@ function Login() {
   return (
     <div style={{ display: "flex" }}>
       <div>
-        <img
-          style={{
-            position: "relative",
-            zIndex: 3,
-            left: 1100,
-            width: "100%",
-          }}
-          src={Logo}
-          alt=""
-        />
+        <Imagen src={Logo} alt="Logo" />
       </div>
-      <div
-        className="Banner"
-        style={{
-          position: "absolute",
-          top: "10px",
-          height: "98%",
-          width: "50%",
-          backgroundColor: "#1a1a1c",
-          borderRadius: "5px",
-          border: "1px solid black",
-        }}
-      >
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            display: "grid",
-            margin: " 30px auto",
-            width: "50%",
-            height: "20%",
-            alignContent: "center",
-          }}
-        >
-          <h4
-            style={{
-              textAlign: "center",
-              marginTop: "100%",
-              fontFamily: "Bolder",
-              fontSize: 100,
-              color: "white",
-            }}
-          >
-            LOGIN
-          </h4>
-          <input
+      <Banner>
+        <Formulario onSubmit={handleSubmit}>
+          <Tittle>LOGIN</Tittle>
+          <InputLogins
             type="email"
             name="email"
             id=""
             placeholder="ingresatuemail@hotmail.com"
             onChange={(e) => setEmail(e.target.value)}
-            style={{
-              width: "98%",
-              margin: " 50px 5px",
-              height: "50px",
-            }}
             value={email}
           />
-          <input
+          <InputLogins
             type="password"
             name="password"
             id=""
             placeholder="Contraseña"
             onChange={(e) => setPassword(e.target.value)}
-            style={{
-              width: "98%",
-              margin: " 5px",
-              height: "50px",
-            }}
             value={password}
           />
           {error && (
             <p style={{ color: "red", textAlign: "center" }}>{error}</p>
           )}
-          <button
-            type="submit"
-            style={{
-              width: "100%",
-              margin: " 20px auto",
-            }}
-          >
-            Send
-          </button>
-        </form>
-      </div>
+          <Button />
+        </Formulario>
+      </Banner>
     </div>
   );
 }
