@@ -1,11 +1,21 @@
 import Image from "react-bootstrap/Image";
 import Imagen from "../../assets/BAnner.png";
-import "./Banner.css";
+
+import styled from "styled-components";
+
+const ContainerBanner = styled.div`
+  margin: 100px auto;
+  width: 1000px;
+  @media (max-width: 700px) {
+    margin: 100px auto;
+    width: 100%;
+  }
+`;
 function Banner() {
   return (
-    <div className="ContainerBanner">
+    <ContainerBanner className="ContainerBanner">
       <Image src={Imagen} fluid />
-    </div>
+    </ContainerBanner>
   );
 }
 

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
+import ButtonSend from "../../Components/Button/Button";
 import "./Producto.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -199,27 +200,14 @@ function Productos() {
                       className="ContainerItem"
                       style={{ display: "flex", justifyContent: "center" }}
                     >
-                      <button
-                        onClick={() => handleEditProduct(product)}
-                        style={{
-                          width: "100px",
-                          fontSize: 10,
-                          fontWeight: "bold",
-                        }}
-                      >
+                      <ButtonSend onClick={() => handleEditProduct(product)}>
                         Editar
-                      </button>
-                      <button
+                      </ButtonSend>
+                      <ButtonSend
                         onClick={() => handleDeleteProduct(product.id)}
-                        style={{
-                          marginLeft: "20px",
-                          width: "100px",
-                          fontSize: 10,
-                          fontWeight: "bold",
-                        }}
                       >
                         Eliminar
-                      </button>
+                      </ButtonSend>
                     </div>
                   </th>
                 </tr>

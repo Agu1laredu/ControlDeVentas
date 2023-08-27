@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import React from "react";
 
-const Button = styled.button`
+const StyledButton = styled.button`
   width: 100%;
   margin: 20px auto;
   border-radius: 8px;
@@ -21,8 +22,14 @@ const Button = styled.button`
     outline: 4px auto -webkit-focus-ring-color;
   }
 `;
-function ButtonSend() {
-  return <Button type="submit">Send</Button>;
+
+interface ButtonProps {
+  onClick: () => void;
+  children: React.ReactNode;
 }
 
-export default ButtonSend;
+function Button({ onClick, children }: ButtonProps) {
+  return <StyledButton onClick={onClick}>{children}</StyledButton>;
+}
+
+export default Button;

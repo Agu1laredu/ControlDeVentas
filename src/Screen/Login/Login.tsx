@@ -125,7 +125,7 @@ function Login() {
           {error && (
             <p style={{ color: "red", textAlign: "center" }}>{error}</p>
           )}
-          <Button />
+          <Button onClick={() => handleSubmit}>Enviar</Button>
         </Formulario>
       </Banner>
     </div>
