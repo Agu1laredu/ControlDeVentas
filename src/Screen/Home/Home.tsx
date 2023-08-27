@@ -1,12 +1,58 @@
 import { useEffect } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./Home.css";
 import Card from "../../Components/Card/Card";
 import Banner from "../../Components/Carousel/Banner";
 import { client } from "../../supabase/client";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
+const Section = styled.section`
+  height: 80vh;
+  width: 80vw;
+  margin-left: 100px;
+  border-radius: 30px;
+
+  @media (max-width: 700px) {
+    margin-left: 20px;
+  }
+`;
+const Tittle = styled.h1`
+  text-align: center;
+  margin: 30px;
+  font-family: "Bolder";
+`;
+
+const CardContainer = styled.div`
+  display: flex;
+  @media (max-width: 700px) {
+    display: grid;
+  }
+`;
+const ButtonLogout = styled.button`
+  position: absolute;
+  left: 80%;
+  margin: 30px;
+  width: 110px;
+  margin: 20px auto;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #646cff;
+  cursor: pointer;
+  transition: border-color 0.25s;
+
+  :hover {
+    border-color: #646cff;
+  }
+  :focus,
+  :focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+`;
 // Interfaz para el objeto de cada elemento de infoCard
 interface CardInfo {
   title: string;
@@ -61,9 +107,9 @@ function Home() {
   return (
     <div style={{ display: "flex" }}>
       <Sidebar />
-      <section>
-        <h1>CONTROL DE VENTAS</h1>
-        <div className="CardContainer">
+      <Section>
+        <Tittle>CONTROL DE VENTAS</Tittle>
+        <CardContainer>
           {/* Mapea cada elemento de infoCard y pasa la información a Card */}
           {infoCard.map((item, index) => (
             <Card
@@ -73,16 +119,10 @@ function Home() {
               img={item.img}
             />
           ))}
-        </div>
+        </CardContainer>
         <Banner />
-        {/* <h2>Controla tus ventas de manera eficiente</h2> */}
-      </section>
-      <button
-        style={{ position: "absolute", left: "80%", margin: 30 }}
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
+      </Section>
+      <ButtonLogout onClick={handleLogout}>Logout</ButtonLogout>
     </div>
   );
 }
