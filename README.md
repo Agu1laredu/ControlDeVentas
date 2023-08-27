@@ -1,4 +1,4 @@
-# React + TypeScript + Vite
+# React + TypeScript + Vite + Styled-components
 
 
 # ¿De que consta el proyecto? 
