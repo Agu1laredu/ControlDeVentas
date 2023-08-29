@@ -66,7 +66,7 @@ function Home() {
     const checkUser = async () => {
       const user = await client.auth.getUser();
 
-      if (user) {
+      if (!user) {
         navigate("/Login"); // Usuario no autenticado, redirigir al inicio de sesión
       }
     };
