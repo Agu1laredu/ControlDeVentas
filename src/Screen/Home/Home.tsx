@@ -1,11 +1,10 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 import Sidebar from "../../Components/SideBar/Sidebar";
-import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "../../Components/Card/Card";
 import Banner from "../../Components/Carousel/Banner";
 import { client } from "../../supabase/client";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 
 const Section = styled.section`
   height: 80vh;
@@ -17,7 +16,8 @@ const Section = styled.section`
     margin-left: 20px;
   }
 `;
-const Tittle = styled.h1`
+
+const Title = styled.h1`
   text-align: center;
   margin: 30px;
   font-family: "Bolder";
@@ -25,10 +25,12 @@ const Tittle = styled.h1`
 
 const CardContainer = styled.div`
   display: flex;
+
   @media (max-width: 700px) {
     display: grid;
   }
 `;
+
 const ButtonLogout = styled.button`
   position: absolute;
   left: 80%;
@@ -48,12 +50,13 @@ const ButtonLogout = styled.button`
   :hover {
     border-color: #646cff;
   }
+
   :focus,
   :focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
   }
 `;
-// Interfaz para el objeto de cada elemento de infoCard
+
 interface CardInfo {
   title: string;
   text: string;
@@ -62,12 +65,13 @@ interface CardInfo {
 
 function Home() {
   const navigate = useNavigate();
+
   useEffect(() => {
     const checkUser = async () => {
       const user = await client.auth.getUser();
 
       if (!user) {
-        navigate("/Login"); // Usuario no autenticado, redirigir al inicio de sesión
+        navigate("/Login"); // Usuario no autenticado, redirigir a la página de inicio de sesión
       }
     };
 
@@ -98,7 +102,6 @@ function Home() {
   ];
 
   const handleLogout = async () => {
-    console.log("Cerrando sesión...");
     await client.auth.signOut();
     navigate("/Login"); // Redirigir a la página de inicio de sesión después del cierre de sesión
     console.log("Sesión cerrada.");
@@ -108,9 +111,8 @@ function Home() {
     <div style={{ display: "flex" }}>
       <Sidebar />
       <Section>
-        <Tittle>CONTROL DE VENTAS</Tittle>
+        <Title>CONTROL DE VENTAS</Title>
         <CardContainer>
-          {/* Mapea cada elemento de infoCard y pasa la información a Card */}
           {infoCard.map((item, index) => (
             <Card
               key={index}
