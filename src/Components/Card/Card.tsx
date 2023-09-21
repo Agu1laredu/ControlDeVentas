@@ -10,7 +10,6 @@ const CardBanner = styled.div`
   box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.3);
   :hover {
     transition: 1s;
-    box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.3);
     cursor: pointer;
   }
   @media (max-width: 700px) {
@@ -22,7 +21,7 @@ const CardBanner = styled.div`
 `;
 
 const AbrigoImagen = styled.img`
-  width: 50%;
+  width: 30%;
   margin: auto;
   @media (max-width: 700px) {
     width: 40%;
@@ -30,7 +29,7 @@ const AbrigoImagen = styled.img`
   }
 
   @media (max-width: 500px) {
-    width: 50%;
+    width: 40%;
     margin: auto;
   }
 `;
@@ -42,9 +41,9 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ title, text, img }) => {
   return (
     <CardBanner>
-      <h3>{title}</h3>
-      <p>{text}</p>
+      <h3 style={{ marginTop: 20 }}>{title}</h3>
       <AbrigoImagen src={img} alt="Abrigo" />
+      <p>{text}</p>
     </CardBanner>
   );
 };

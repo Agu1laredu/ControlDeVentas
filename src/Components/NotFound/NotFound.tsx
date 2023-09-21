@@ -50,9 +50,8 @@ const changeColor = keyframes`
 
 const Section = styled.section`
   margin-top: 100px;
-  width: 100vw;
+  width: 95vw;
   height: 90vh;
-  overflow: hidden;
 `;
 
 const Card = styled.div`
@@ -187,7 +186,7 @@ function NotFound() {
         style={{
           position: "relative",
           top: "-200vh",
-          left: " 78vw",
+          left: " 78  vw",
         }}
       >
         <h3 style={{ textAlign: "center", color: "white" }}>Not Found</h3>

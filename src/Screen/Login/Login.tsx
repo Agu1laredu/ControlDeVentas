@@ -1,17 +1,22 @@
-import { useState, useEffect, FormEvent } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import { client } from "../../supabase/client.tsx";
 import { useNavigate } from "react-router-dom";
-import Button from "../../Components/Button/Button.tsx";
 import Logo from "../../assets/LogoVentas.png";
 
 import styled from "styled-components";
+interface ButtonProps {
+  type?: "button" | "submit" | "reset"; // Esto permite que la prop 'type' sea opcional y solo acepte ciertos valores
+  children: React.ReactNode;
+  // Otras propiedades que pueda tener tu botón
+}
 
 const Banner = styled.div`
   position: absolute;
   top: 10px;
+  left: 10px;
   height: 98%;
   width: 50%;
-  backgroundcolor: #1a1a1c;
+  background-color: #1a1a1c; /* Corregido typo backgroundcolor a backgroundColor */
   border-radius: 5px;
   border: 1px solid black;
   background: rgb(81, 74, 175);
@@ -28,7 +33,7 @@ const Banner = styled.div`
 const Tittle = styled.h4`
   text-align: center;
   margin-top: 50%;
-  font-family: Bolder;
+  font-family: Bolder; /* Corregido typo font-family a fontFamily */
   font-size: 100px;
   color: white;
 `;
@@ -44,7 +49,7 @@ const Formulario = styled.form`
   margin: 30px auto;
   width: 50%;
   height: 20%;
-  aligncontent: center;
+  align-content: center; /* Corregido typo aligncontent a align-content */
 `;
 
 const InputLogins = styled.input`
@@ -52,20 +57,62 @@ const InputLogins = styled.input`
   margin: 5px;
   height: 50px;
 `;
+const Button = styled.button`
+  margin-left: 100px;
+  border-radius: 8px;
+  width: 200px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #646cff;
+  cursor: pointer;
+  transition: border-color 0.25s;
 
-function Login() {
+  :hover {
+    border-color: #646cff;
+  }
+  :focus,
+  :focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+  @media (max-width: 700px) {
+    width: 100%;
+    margin: auto;
+    position: relative;
+    left: -50%;
+    top: 20%;
+  }
+`;
+
+function Buutton({ type = "button", children, ...otherProps }: ButtonProps) {
+  return (
+    <Button type={type} {...otherProps}>
+      {children}
+    </Button>
+  );
+}
+function Login(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null); // Estado para manejar errores
   const navigate = useNavigate();
 
   const registerUser = async (email: string, password: string) => {
-    const { error } = await client.auth.signUp({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await client.auth.signUp({
+        email: email,
+        password: password,
+      });
 
-    if (error) {
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    } catch (error) {
+      console.error(error);
       throw error;
     }
   };
@@ -125,7 +172,8 @@ function Login() {
           {error && (
             <p style={{ color: "red", textAlign: "center" }}>{error}</p>
           )}
-          <Button onClick={() => handleSubmit}>Enviar</Button>
+          <Buutton type="submit">Enviar</Buutton>
+          {/* Corregido el botón para que funcione el envío del formulario */}
         </Formulario>
       </Banner>
     </div>

@@ -4,6 +4,7 @@ import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
 import ButtonSend from "../../Components/Button/Button";
 import styled from "styled-components";
+import { client } from "../../supabase/client";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -145,24 +146,42 @@ function Productos() {
     setProductList(productManager.getProducts());
   }, []);
 
-  // Función para manejar el envío del formulario de agregar/editar producto
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    try {
+      // Obtiene la información del usuario autenticado
+      const userResponse = await client.auth.admin.getUserById("userId");
 
-    const formData = new FormData(event.currentTarget);
-    const name = formData.get("name") as string;
-    const price = parseFloat(formData.get("price") as string);
-    const Talle = formData.get("Talle") as string;
+      // Utilizamos el operador de encadenamiento opcional (?.) para acceder a user.id
+      const userId = userResponse.data?.user?.id;
 
-    if (currentProduct) {
-      productManager.editProduct(currentProduct.id, name, price, Talle);
-      setCurrentProduct(null);
-    } else {
-      productManager.addProduct(name, price, Talle);
+      if (userId) {
+        const formData = new FormData(event.currentTarget);
+        const name = formData.get("name") as string;
+        const price = parseFloat(formData.get("price") as string);
+        const Talle = formData.get("Talle") as string;
+
+        const result = await client.from("Products").insert([
+          {
+            name,
+            price,
+            Talle,
+            userId, // Usamos userId directamente
+          },
+        ]);
+
+        console.log(result);
+
+        productManager.addProduct(name, price, Talle); // Agrega el producto localmente
+        productManager.saveProductsToLocalStorage(); // Guarda los productos en el localStorage
+        setProductList(productManager.getProducts());
+      } else {
+        // El usuario no está autenticado, puedes manejarlo según tus necesidades
+        console.error("Usuario no autenticado.");
+      }
+    } catch (err) {
+      console.error(err);
     }
-
-    productManager.saveProductsToLocalStorage(); // Guardamos los productos en el localStorage
-    setProductList(productManager.getProducts());
   };
 
   // Función para eliminar un producto

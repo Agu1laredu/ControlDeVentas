@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Sidebar from "../../Components/SideBar/Sidebar";
@@ -34,16 +33,16 @@ const CardContainer = styled.div`
 const ButtonLogout = styled.button`
   position: absolute;
   left: 80%;
-  margin: 30px;
+  top: 10%;
   width: 110px;
-  margin: 20px auto;
+  color: white;
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #646cff;
+  background-color: black;
   cursor: pointer;
   transition: border-color 0.25s;
 
@@ -65,18 +64,6 @@ interface CardInfo {
 
 function Home() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkUser = async () => {
-      const user = await client.auth.getUser();
-
-      if (!user) {
-        navigate("/Login"); // Usuario no autenticado, redirigir a la página de inicio de sesión
-      }
-    };
-
-    checkUser();
-  }, [navigate]);
 
   const infoCard: CardInfo[] = [
     {
@@ -101,17 +88,27 @@ function Home() {
     },
   ];
 
-  const handleLogout = async () => {
-    await client.auth.signOut();
-    navigate("/Login"); // Redirigir a la página de inicio de sesión después del cierre de sesión
-    console.log("Sesión cerrada.");
-  };
+  async function signOut() {
+    try {
+      const { error } = await client.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      // Redirige al usuario a la página de inicio de sesión
+      navigate("/Login");
+    } catch (error) {
+      console.error("Error al hacer logout:", error);
+    }
+  }
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", gap: 5 }}>
       <Sidebar />
       <Section>
-        <Title>CONTROL DE VENTAS</Title>
+        <div style={{ display: "flex" }}>
+          <Title>CONTROL DE VENTAS</Title>
+          <ButtonLogout onClick={signOut}>Logout</ButtonLogout>
+        </div>
         <CardContainer>
           {infoCard.map((item, index) => (
             <Card
@@ -124,7 +121,6 @@ function Home() {
         </CardContainer>
         <Banner />
       </Section>
-      <ButtonLogout onClick={handleLogout}>Logout</ButtonLogout>
     </div>
   );
 }
