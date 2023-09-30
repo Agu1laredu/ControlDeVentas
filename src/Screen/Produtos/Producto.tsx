@@ -139,61 +139,79 @@ class ProductManager {
 function Productos() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+  const [totalPrice, setTotalPrice] = useState<number>(0); // Estado para el precio total
   const productManager = new ProductManager();
 
   useEffect(() => {
     productManager.loadProductsFromLocalStorage();
     setProductList(productManager.getProducts());
+    updateTotalPrice();
   }, []);
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      // Obtiene la información del usuario autenticado
-      const userResponse = await client.auth.admin.getUserById("userId");
+      const formData = new FormData(event.currentTarget);
+      const name = formData.get("name") as string;
+      const price = parseFloat(formData.get("price") as string);
+      const Talle = formData.get("Talle") as string;
 
-      // Utilizamos el operador de encadenamiento opcional (?.) para acceder a user.id
-      const userId = userResponse.data?.user?.id;
+      const result = await client.from("Products").insert([
+        {
+          name,
+          price,
+          Talle,
+        },
+      ]);
 
-      if (userId) {
-        const formData = new FormData(event.currentTarget);
-        const name = formData.get("name") as string;
-        const price = parseFloat(formData.get("price") as string);
-        const Talle = formData.get("Talle") as string;
+      console.log(result);
 
-        const result = await client.from("Products").insert([
-          {
-            name,
-            price,
-            Talle,
-            userId, // Usamos userId directamente
-          },
-        ]);
-
-        console.log(result);
-
-        productManager.addProduct(name, price, Talle); // Agrega el producto localmente
-        productManager.saveProductsToLocalStorage(); // Guarda los productos en el localStorage
-        setProductList(productManager.getProducts());
-      } else {
-        // El usuario no está autenticado, puedes manejarlo según tus necesidades
-        console.error("Usuario no autenticado.");
-      }
-    } catch (err) {
-      console.error(err);
+      productManager.addProduct(name, price, Talle);
+      productManager.saveProductsToLocalStorage();
+      const updatedProductList = [
+        ...productList,
+        productManager.getProducts()[productManager.getProducts().length - 1],
+      ]; // Agrega el último producto agregado a la lista actual
+      setProductList(updatedProductList);
+      updateTotalPrice();
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   };
 
-  // Función para eliminar un producto
-  const handleDeleteProduct = (id: number) => {
-    productManager.deleteProduct(id);
-    productManager.saveProductsToLocalStorage(); // Guardamos los productos en el localStorage
-    setProductList(productManager.getProducts());
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      // Elimina el producto de la base de datos de Supabase
+      const result = await client.from("Products").delete().eq("id", id);
+
+      console.log(result);
+
+      // Elimina el producto localmente
+      productManager.deleteProduct(id);
+      productManager.saveProductsToLocalStorage();
+      const updatedProductList = productList.filter(
+        (product) => product.id !== id
+      );
+      setProductList(updatedProductList);
+      updateTotalPrice();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   };
 
   // Función para editar un producto
   const handleEditProduct = (product: Product) => {
     setCurrentProduct(product);
+  };
+
+  // Función para actualizar el precio total
+  const updateTotalPrice = () => {
+    const total = productManager
+      .getProducts()
+      .reduce((acc, product) => acc + product.price, 0);
+    setTotalPrice(total);
   };
 
   return (
@@ -244,6 +262,7 @@ function Productos() {
               required
             />
           </div>
+
           <ButtonEditar className="ButtonEditar" type="submit">
             {currentProduct ? "Editar Producto" : "Agregar Producto"}
           </ButtonEditar>
@@ -252,13 +271,18 @@ function Productos() {
         {/* Mostrar los productos agregados */}
         {productList.map((product) => (
           <TablaContainer key={product.id}>
+            <tr key={product.id}></tr>
             <Table striped bordered hover>
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>{product.name}</th>
-                  <th>{product.Talle}</th>
-                  <th>${product.price}</th>
+                  <td>{product.name}</td>
+                  <td>{product.Talle}</td>
+                  <td>${product.price.toFixed(2)}</td>
+                  <tr>
+                    <td colSpan={2}>Total:</td>
+                    <td>${totalPrice.toFixed(2)}</td>
+                  </tr>
                   <th>
                     <div
                       className="ContainerItem"
