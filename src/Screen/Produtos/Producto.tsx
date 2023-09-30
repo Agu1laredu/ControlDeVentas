@@ -71,7 +71,7 @@ interface Product {
   id: number;
   name: string;
   price: number;
-  talle: string;
+  Talle: string;
 }
 
 class ProductManager {
@@ -81,6 +81,7 @@ class ProductManager {
   constructor() {
     this.products = [];
     this.nextId = 1;
+    this.loadProductsFromLocalStorage();
   }
 
   saveProductsToLocalStorage(): void {
@@ -100,26 +101,27 @@ class ProductManager {
   }
 
   // Agregar un nuevo producto
-  addProduct(name: string, price: number, talle: string): void {
+  addProduct(name: string, price: number, Talle: string): void {
     const newProduct: Product = {
-      id: this.nextId,
+      id: this.nextId, // Usar el nextId actual
       name,
       price,
-      talle,
+      Talle,
     };
 
     this.products.push(newProduct);
-    this.nextId++;
+    this.nextId++; // Aumentar el nextId para el siguiente producto
+    this.saveProductsToLocalStorage();
   }
 
   // Editar un producto existente por ID
-  editProduct(id: number, name: string, price: number, talle: string): void {
+  editProduct(id: number, name: string, price: number, Talle: string): void {
     const index = this.products.findIndex((product) => product.id === id);
 
     if (index !== -1) {
       this.products[index].name = name;
       this.products[index].price = price;
-      this.products[index].talle = talle;
+      this.products[index].Talle = Talle;
     } else {
       console.log("Producto no encontrado");
     }
@@ -128,6 +130,7 @@ class ProductManager {
   // Eliminar un producto existente por ID
   deleteProduct(id: number): void {
     this.products = this.products.filter((product) => product.id !== id);
+    this.saveProductsToLocalStorage(); // Guardar la lista actualizada después de eliminar
   }
 
   // Obtener todos los productos
@@ -139,13 +142,11 @@ class ProductManager {
 function Productos() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
-  const [totalPrice, setTotalPrice] = useState<number>(0); // Estado para el precio total
   const productManager = new ProductManager();
 
   useEffect(() => {
     productManager.loadProductsFromLocalStorage();
     setProductList(productManager.getProducts());
-    updateTotalPrice();
   }, []);
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -154,26 +155,25 @@ function Productos() {
       const formData = new FormData(event.currentTarget);
       const name = formData.get("name") as string;
       const price = parseFloat(formData.get("price") as string);
-      const talle = formData.get("talle") as string;
+      const Talle = formData.get("Talle") as string;
 
       const result = await client.from("Products").insert([
         {
           name,
           price,
-          talle,
+          Talle,
         },
       ]);
 
       console.log(result);
 
-      productManager.addProduct(name, price, talle);
-      productManager.saveProductsToLocalStorage();
+      productManager.addProduct(name, price, Talle);
+      productManager.saveProductsToLocalStorage(); // Guardar en localStorage
       const updatedProductList = [
         ...productList,
         productManager.getProducts()[productManager.getProducts().length - 1],
       ]; // Agrega el último producto agregado a la lista actual
       setProductList(updatedProductList);
-      updateTotalPrice();
     } catch (error) {
       console.error(error);
       throw error;
@@ -208,14 +208,6 @@ function Productos() {
     setCurrentProduct(product);
   };
 
-  // Función para actualizar el precio total
-  const updateTotalPrice = () => {
-    const total = productManager
-      .getProducts()
-      .reduce((acc, product) => acc + product.price, 0);
-    setTotalPrice(total);
-  };
-
   return (
     <div
       style={{
@@ -248,7 +240,7 @@ function Productos() {
             <input
               type="text"
               name="Talle"
-              defaultValue={currentProduct?.talle ?? ""}
+              defaultValue={currentProduct?.Talle ?? ""}
               required
             />
           </div>
@@ -271,14 +263,7 @@ function Productos() {
         </Formproduct>
 
         {/* Mostrar los productos agregados */}
-        <table style={{ margin: "auto", fontSize: 40 }}>
-          <thead>
-            <tr>
-              <td colSpan={2}>Total:</td>
-              <td>${totalPrice.toFixed(2)}</td>
-            </tr>
-          </thead>
-        </table>
+
         {productList.map((product) => (
           <TablaContainer key={product.id}>
             <Table striped bordered hover>
@@ -286,8 +271,7 @@ function Productos() {
                 <tr>
                   <th>#</th>
                   <td>{product.name}</td>
-                  <td>{product.talle}</td>
-                  <td>${product.price.toFixed(2)}</td>
+                  <td>{product.Talle}</td>
                   <th>
                     <div
                       className="ContainerItem"

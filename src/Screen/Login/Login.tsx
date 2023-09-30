@@ -42,23 +42,23 @@ const Imagen = styled.img`
   position: relative;
   z-index: 3;
   left: 1100px;
-  width: 100%;
+  width: 150%;
 `;
 const Formulario = styled.form`
   display: grid;
   margin: 30px auto;
-  width: 50%;
-  height: 20%;
+  width: 100%;
+  height: 50%;
   align-content: center; /* Corregido typo aligncontent a align-content */
 `;
 
 const InputLogins = styled.input`
-  width: 98%;
-  margin: 5px;
+  width: 50%;
+  margin: 10px auto;
   height: 50px;
 `;
 const Button = styled.button`
-  margin-left: 100px;
+  margin: 10px auto;
   border-radius: 8px;
   width: 200px;
   border: 1px solid transparent;

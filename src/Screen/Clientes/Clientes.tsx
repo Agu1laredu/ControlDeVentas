@@ -79,6 +79,7 @@ class ClientsManager {
   constructor() {
     this.clients = [];
     this.nextId = 1;
+    this.loadClientsFromLocalStorage();
   }
 
   saveClientsToLocalStorage(): void {
@@ -90,51 +91,52 @@ class ClientsManager {
     if (clientsData) {
       this.clients = JSON.parse(clientsData);
       this.nextId =
-        this.clients.reduce(
-          (maxId, clients) => Math.max(maxId, clients.id),
-          0
-        ) + 1;
+        this.clients.reduce((maxId, client) => Math.max(maxId, client.id), 0) +
+        1;
     }
   }
 
-  // Agregar un nuevo producto
-  addProduct(LastName: string, Apellido: string, Telefono: number): void {
-    const newProduct: Clients = {
+  // Agregar un nuevo cliente
+  addClient(LastName: string, Apellido: string, Telefono: number): void {
+    const newClient: Clients = {
       id: this.nextId,
       LastName,
       Apellido,
       Telefono,
     };
 
-    this.clients.push(newProduct);
+    this.clients.push(newClient);
     this.nextId++;
+    this.saveClientsToLocalStorage();
   }
 
-  // Editar un producto existente por ID
-  editProduct(
+  // Editar un cliente existente por ID
+  editClient(
     id: number,
     LastName: string,
     Apellido: string,
     Telefono: number
   ): void {
-    const index = this.clients.findIndex((clients) => clients.id === id);
+    const index = this.clients.findIndex((client) => client.id === id);
 
     if (index !== -1) {
       this.clients[index].LastName = LastName;
       this.clients[index].Apellido = Apellido;
       this.clients[index].Telefono = Telefono;
+      this.saveClientsToLocalStorage();
     } else {
-      console.log("Clients no encontrado");
+      console.log("Cliente no encontrado");
     }
   }
 
-  // Eliminar un producto existente por ID
-  deleteProduct(id: number): void {
-    this.clients = this.clients.filter((clients) => clients.id !== id);
+  // Eliminar un cliente existente por ID
+  deleteClient(id: number): void {
+    this.clients = this.clients.filter((client) => client.id !== id);
+    this.saveClientsToLocalStorage();
   }
 
-  // Obtener todos los productos
-  getProducts(): Clients[] {
+  // Obtener todos los clientes
+  getClients(): Clients[] {
     return this.clients;
   }
 }
@@ -146,7 +148,7 @@ function ClientsCode() {
 
   useEffect(() => {
     clientsManager.loadClientsFromLocalStorage();
-    setClientList(clientsManager.getProducts());
+    setClientList(clientsManager.getClients());
   }, []);
 
   // Función para manejar el envío del formulario de agregar/editar producto
@@ -168,11 +170,11 @@ function ClientsCode() {
 
       console.log(result);
 
-      clientsManager.addProduct(LastName, Apellido, Telefono);
+      clientsManager.addClient(LastName, Apellido, Telefono);
       clientsManager.saveClientsToLocalStorage();
       const updateClientList = [
         ...clientList,
-        clientsManager.getProducts()[clientsManager.getProducts().length - 1],
+        clientsManager.getClients()[clientsManager.getClients().length - 1],
       ]; // Agrega el último producto agregado a la lista actual
       setClientList(updateClientList);
     } catch (error) {
@@ -189,7 +191,7 @@ function ClientsCode() {
       console.log(result);
 
       // Elimina el producto localmente
-      clientsManager.deleteProduct(id);
+      clientsManager.deleteClient(id);
       clientsManager.saveClientsToLocalStorage();
       const updateClientList = clientList.filter((client) => client.id !== id);
       setClientList(updateClientList);
