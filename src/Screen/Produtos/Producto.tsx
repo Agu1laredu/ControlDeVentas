@@ -71,7 +71,7 @@ interface Product {
   id: number;
   name: string;
   price: number;
-  Talle: string;
+  talle: string;
 }
 
 class ProductManager {
@@ -100,12 +100,12 @@ class ProductManager {
   }
 
   // Agregar un nuevo producto
-  addProduct(name: string, price: number, Talle: string): void {
+  addProduct(name: string, price: number, talle: string): void {
     const newProduct: Product = {
       id: this.nextId,
       name,
       price,
-      Talle,
+      talle,
     };
 
     this.products.push(newProduct);
@@ -113,13 +113,13 @@ class ProductManager {
   }
 
   // Editar un producto existente por ID
-  editProduct(id: number, name: string, price: number, Talle: string): void {
+  editProduct(id: number, name: string, price: number, talle: string): void {
     const index = this.products.findIndex((product) => product.id === id);
 
     if (index !== -1) {
       this.products[index].name = name;
       this.products[index].price = price;
-      this.products[index].Talle = Talle;
+      this.products[index].talle = talle;
     } else {
       console.log("Producto no encontrado");
     }
@@ -154,19 +154,19 @@ function Productos() {
       const formData = new FormData(event.currentTarget);
       const name = formData.get("name") as string;
       const price = parseFloat(formData.get("price") as string);
-      const Talle = formData.get("Talle") as string;
+      const talle = formData.get("talle") as string;
 
       const result = await client.from("Products").insert([
         {
           name,
           price,
-          Talle,
+          talle,
         },
       ]);
 
       console.log(result);
 
-      productManager.addProduct(name, price, Talle);
+      productManager.addProduct(name, price, talle);
       productManager.saveProductsToLocalStorage();
       const updatedProductList = [
         ...productList,
@@ -180,6 +180,7 @@ function Productos() {
     }
   };
 
+  // Función para eliminar un producto
   const handleDeleteProduct = async (id: number) => {
     try {
       // Elimina el producto de la base de datos de Supabase
@@ -190,11 +191,12 @@ function Productos() {
       // Elimina el producto localmente
       productManager.deleteProduct(id);
       productManager.saveProductsToLocalStorage();
+
+      // Actualiza la lista de productos excluyendo el producto eliminado
       const updatedProductList = productList.filter(
         (product) => product.id !== id
       );
       setProductList(updatedProductList);
-      updateTotalPrice();
     } catch (error) {
       console.error(error);
       throw error;
@@ -246,7 +248,7 @@ function Productos() {
             <input
               type="text"
               name="Talle"
-              defaultValue={currentProduct?.Talle ?? ""}
+              defaultValue={currentProduct?.talle ?? ""}
               required
             />
           </div>
@@ -269,20 +271,23 @@ function Productos() {
         </Formproduct>
 
         {/* Mostrar los productos agregados */}
+        <table style={{ margin: "auto", fontSize: 40 }}>
+          <thead>
+            <tr>
+              <td colSpan={2}>Total:</td>
+              <td>${totalPrice.toFixed(2)}</td>
+            </tr>
+          </thead>
+        </table>
         {productList.map((product) => (
           <TablaContainer key={product.id}>
-            <tr key={product.id}></tr>
             <Table striped bordered hover>
               <thead>
                 <tr>
                   <th>#</th>
                   <td>{product.name}</td>
-                  <td>{product.Talle}</td>
+                  <td>{product.talle}</td>
                   <td>${product.price.toFixed(2)}</td>
-                  <tr>
-                    <td colSpan={2}>Total:</td>
-                    <td>${totalPrice.toFixed(2)}</td>
-                  </tr>
                   <th>
                     <div
                       className="ContainerItem"
@@ -293,6 +298,7 @@ function Productos() {
                       </ButtonSend>
                       <ButtonSend
                         onClick={() => handleDeleteProduct(product.id)}
+                        key={`delete-${product.id}`}
                       >
                         Eliminar
                       </ButtonSend>

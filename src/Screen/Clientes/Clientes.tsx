@@ -4,6 +4,7 @@ import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
 import ButtonSend from "../../Components/Button/Button";
 import styled from "styled-components";
+import { client } from "../../supabase/client";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -149,35 +150,53 @@ function ClientsCode() {
   }, []);
 
   // Función para manejar el envío del formulario de agregar/editar producto
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    try {
+      const formData = new FormData(event.currentTarget);
+      const LastName = formData.get("LastName") as string;
+      const Apellido = formData.get("Apellido") as string;
+      const Telefono = parseFloat(formData.get("Telefono") as string);
 
-    const formData = new FormData(event.currentTarget);
-    const LastName = formData.get("LastName") as string;
-    const Apellido = formData.get("Apellido") as string;
-    const Telefono = parseFloat(formData.get("Telefono") as string);
+      const result = await client.from("Clients").insert([
+        {
+          LastName,
+          Apellido,
+          Telefono,
+        },
+      ]);
 
-    if (currentClient) {
-      clientsManager.editProduct(
-        currentClient.id,
-        LastName,
-        Apellido,
-        Telefono
-      );
-      setCurrentClient(null);
-    } else {
+      console.log(result);
+
       clientsManager.addProduct(LastName, Apellido, Telefono);
+      clientsManager.saveClientsToLocalStorage();
+      const updateClientList = [
+        ...clientList,
+        clientsManager.getProducts()[clientsManager.getProducts().length - 1],
+      ]; // Agrega el último producto agregado a la lista actual
+      setClientList(updateClientList);
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-
-    clientsManager.saveClientsToLocalStorage(); // Guardamos los productos en el localStorage
-    setClientList(clientsManager.getProducts());
   };
-
   // Función para eliminar un producto
-  const handleDeleteProduct = (id: number) => {
-    clientsManager.deleteProduct(id);
-    clientsManager.saveClientsToLocalStorage(); // Guardamos los productos en el localStorage
-    setClientList(clientsManager.getProducts());
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      // Elimina el producto de la base de datos de Supabase
+      const result = await client.from("Clients").delete().eq("id", id);
+
+      console.log(result);
+
+      // Elimina el producto localmente
+      clientsManager.deleteProduct(id);
+      clientsManager.saveClientsToLocalStorage();
+      const updateClientList = clientList.filter((client) => client.id !== id);
+      setClientList(updateClientList);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   };
 
   // Función para editar un producto
@@ -250,7 +269,10 @@ function ClientsCode() {
                   <th>{clients.Apellido}</th>
                   <th>{clients.Telefono}</th>
                   <th>
-                    <div style={{ display: "flex", justifyContent: "center" }}>
+                    <div
+                      className="ContainerItem"
+                      style={{ display: "flex", justifyContent: "center" }}
+                    >
                       <ButtonSend onClick={() => handleEditProduct(clients)}>
                         Editar
                       </ButtonSend>
