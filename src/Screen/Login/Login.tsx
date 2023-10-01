@@ -1,13 +1,13 @@
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useState, FormEvent } from "react";
 import { client } from "../../supabase/client.tsx";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/LogoVentas.png";
 
 import styled from "styled-components";
+
 interface ButtonProps {
-  type?: "button" | "submit" | "reset"; // Esto permite que la prop 'type' sea opcional y solo acepte ciertos valores
+  type?: "button" | "submit" | "reset";
   children: React.ReactNode;
-  // Otras propiedades que pueda tener tu botón
 }
 
 const Banner = styled.div`
@@ -16,7 +16,7 @@ const Banner = styled.div`
   left: 10px;
   height: 98%;
   width: 50%;
-  background-color: #1a1a1c; /* Corregido typo backgroundcolor a backgroundColor */
+  background-color: #1a1a1c;
   border-radius: 5px;
   border: 1px solid black;
   background: rgb(81, 74, 175);
@@ -30,33 +30,35 @@ const Banner = styled.div`
   );
 `;
 
-const Tittle = styled.h4`
+const Title = styled.h4`
   text-align: center;
   margin-top: 50%;
-  font-family: Bolder; /* Corregido typo font-family a fontFamily */
+  font-family: "Bolder";
   font-size: 100px;
   color: white;
 `;
 
-const Imagen = styled.img`
+const Image = styled.img`
   position: relative;
   z-index: 3;
   left: 1100px;
   width: 150%;
 `;
-const Formulario = styled.form`
+
+const Form = styled.form`
   display: grid;
   margin: 30px auto;
   width: 100%;
   height: 50%;
-  align-content: center; /* Corregido typo aligncontent a align-content */
+  align-content: center;
 `;
 
-const InputLogins = styled.input`
+const InputLogin = styled.input`
   width: 50%;
   margin: 10px auto;
   height: 50px;
 `;
+
 const Button = styled.button`
   margin: 10px auto;
   border-radius: 8px;
@@ -73,10 +75,12 @@ const Button = styled.button`
   :hover {
     border-color: #646cff;
   }
+
   :focus,
   :focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
   }
+
   @media (max-width: 700px) {
     width: 100%;
     margin: auto;
@@ -86,28 +90,46 @@ const Button = styled.button`
   }
 `;
 
-function Buutton({ type = "button", children, ...otherProps }: ButtonProps) {
+function ButtonComponent({
+  type = "button",
+  children,
+  ...otherProps
+}: ButtonProps) {
   return (
     <Button type={type} {...otherProps}>
       {children}
     </Button>
   );
 }
+
 function Login(): JSX.Element {
+  const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string | null>(null); // Estado para manejar errores
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const registerUser = async (email: string, password: string) => {
+  const registerUser = async (
+    name: string,
+    email: string,
+    password: string
+  ) => {
     try {
-      const { data, error } = await client.auth.signUp({
-        email: email,
-        password: password,
+      const { error } = await client.auth.signUp({
+        email,
+        password,
       });
 
       if (error) {
         throw new Error(error.message);
+      }
+      // Inserta al usuario en la tabla 'profiles'
+      const { data, error: profileError } = await client
+        .from("profiles")
+        .upsert([{ name, email }], { onConflict: "email" });
+
+      if (profileError) {
+        throw new Error(profileError.message);
       }
 
       return data;
@@ -121,47 +143,39 @@ function Login(): JSX.Element {
     e.preventDefault();
 
     try {
-      // Llama a la función de registro de usuario
-      await registerUser(email, password);
+      await registerUser(name, email, password);
 
       // Registro exitoso, redirige al usuario a la página de inicio
       navigate("/"); // Cambia la redirección según tus necesidades
     } catch (error) {
-      setError("Error al registrar usuario. Verifica tus credenciales."); // Maneja el error
+      setError("Error al registrar usuario. Verifica tus credenciales.");
     }
   };
-
-  useEffect(() => {
-    const checkUser = async () => {
-      const user = await client.auth.getUser();
-
-      if (!user) {
-        navigate("/"); // Usuario autenticado, redirigir a la página de inicio
-      } else {
-        navigate("/Login");
-      }
-    };
-
-    checkUser();
-  }, [navigate]);
 
   return (
     <div style={{ display: "flex" }}>
       <div>
-        <Imagen src={Logo} alt="Logo" />
+        <Image src={Logo} alt="Logo" />
       </div>
       <Banner>
-        <Formulario onSubmit={handleSubmit}>
-          <Tittle>LOGIN</Tittle>
-          <InputLogins
+        <Form onSubmit={handleSubmit}>
+          <Title>LOGIN</Title>
+          <InputLogin
+            type="text"
+            name="name"
+            id=""
+            placeholder="Name "
+            onChange={(e) => setName(e.target.value)}
+          />
+
+          <InputLogin
             type="email"
             name="email"
             id=""
-            placeholder="ingresatuemail@hotmail.com"
+            placeholder="Correo Electrónico"
             onChange={(e) => setEmail(e.target.value)}
-            value={email}
           />
-          <InputLogins
+          <InputLogin
             type="password"
             name="password"
             id=""
@@ -172,9 +186,8 @@ function Login(): JSX.Element {
           {error && (
             <p style={{ color: "red", textAlign: "center" }}>{error}</p>
           )}
-          <Buutton type="submit">Enviar</Buutton>
-          {/* Corregido el botón para que funcione el envío del formulario */}
-        </Formulario>
+          <ButtonComponent type="submit">Enviar</ButtonComponent>
+        </Form>
       </Banner>
     </div>
   );
