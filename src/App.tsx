@@ -11,7 +11,7 @@ function App() {
   useEffect(() => {
     client.auth.onAuthStateChange((_event, session) => {
       if (!session) {
-        navigate("/login");
+        navigate("/Login");
       } else {
         navigate("/");
       }
