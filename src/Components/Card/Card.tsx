@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const CardBanner = styled.div`
   width: 100%;
-  height: 35vh;
+  height: 30vh;
   margin: 10px;
   border-radius: 20px;
   font-family: "Bolder";
@@ -12,10 +12,17 @@ const CardBanner = styled.div`
     transition: 1s;
     cursor: pointer;
   }
-  @media (max-width: 700px) {
-    width: 100%;
-    height: 40vh;
+  @media (max-width: 1030px) {
+    height: 20vh;
+    width: 600px;
+  }
+  @media (max-width: 800px) {
+    height: 20vh;
+    width: 800px;
+  }
+  @media (max-width: 768px) {
     gap: 20px;
+    width: 1000px;
     margin-top: 10%;
   }
 `;

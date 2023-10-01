@@ -25,8 +25,11 @@ const Section = styled.section`
   margin-left: 100px;
   border: 2px solid #242527;
   padding: 50px;
-  width: 80vw;
+  width: 70vw;
   border-radius: 15px;
+  @media (max-width: 1280px) {
+    width: 75vw;
+  }
 `;
 
 const ButtonEditar = styled.button`
@@ -64,7 +67,6 @@ const TablaContainer = styled.div`
   top: 30px;
   width: 100%;
   padding: 20px;
-  borderradius: 20px;
 `;
 
 interface Product {
@@ -270,24 +272,34 @@ function Productos() {
               <thead>
                 <tr>
                   <th>#</th>
-                  <td>{product.name}</td>
-                  <td>{product.Talle}</td>
-                  <th>
-                    <div
-                      className="ContainerItem"
-                      style={{ display: "flex", justifyContent: "center" }}
+                  <td style={{ width: "100px", fontSize: 20 }}>
+                    {product.name}
+                  </td>
+                  <td style={{ width: "100px", fontSize: 20 }}>
+                    {product.Talle}
+                  </td>
+                  <td style={{ width: "100px", fontSize: 20, color: "green" }}>
+                    ${product.price}
+                  </td>
+                  <div
+                    className="ContainerItem"
+                    style={{
+                      position: "relative",
+                      left: "20%",
+                      width: "300px",
+                      display: "flex",
+                    }}
+                  >
+                    <ButtonSend onClick={() => handleEditProduct(product)}>
+                      Editar
+                    </ButtonSend>
+                    <ButtonSend
+                      onClick={() => handleDeleteProduct(product.id)}
+                      key={`delete-${product.id}`}
                     >
-                      <ButtonSend onClick={() => handleEditProduct(product)}>
-                        Editar
-                      </ButtonSend>
-                      <ButtonSend
-                        onClick={() => handleDeleteProduct(product.id)}
-                        key={`delete-${product.id}`}
-                      >
-                        Eliminar
-                      </ButtonSend>
-                    </div>
-                  </th>
+                      Eliminar
+                    </ButtonSend>
+                  </div>
                 </tr>
               </thead>
             </Table>

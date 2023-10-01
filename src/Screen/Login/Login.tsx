@@ -12,13 +12,13 @@ interface ButtonProps {
 
 const Banner = styled.div`
   position: absolute;
+  display: flex;
+  gap: 30px;
   top: 10px;
   left: 10px;
-  height: 98%;
-  width: 50%;
-  background-color: #1a1a1c;
+  height: 100%;
+  width: 100%;
   border-radius: 5px;
-  border: 1px solid black;
   background: rgb(81, 74, 175);
   background: linear-gradient(
     90deg,
@@ -28,6 +28,18 @@ const Banner = styled.div`
     rgba(236, 255, 0, 1) 100%,
     rgba(176, 31, 31, 1) 100%
   );
+  @media (max-width: 1030px) {
+    width: 98%;
+    height: 98%;
+  }
+  @media (max-width: 800px) {
+    width: 97%;
+    height: 97%;
+  }
+  @media (max-width: 700px) {
+    margin: 100px auto;
+    width: 100%;
+  }
 `;
 
 const Title = styled.h4`
@@ -39,10 +51,14 @@ const Title = styled.h4`
 `;
 
 const Image = styled.img`
-  position: relative;
-  z-index: 3;
-  left: 1100px;
-  width: 150%;
+  width: 100%;
+  object-fit: cover;
+  @media (max-width: 1030px) {
+    display: none;
+  }
+  @media (max-width: 800px) {
+    display: none;
+  }
 `;
 
 const Form = styled.form`
@@ -51,6 +67,9 @@ const Form = styled.form`
   width: 100%;
   height: 50%;
   align-content: center;
+  @media (max-width: 800px) {
+    width: 100%;
+  }
 `;
 
 const InputLogin = styled.input`
@@ -154,9 +173,6 @@ function Login(): JSX.Element {
 
   return (
     <div style={{ display: "flex" }}>
-      <div>
-        <Image src={Logo} alt="Logo" />
-      </div>
       <Banner>
         <Form onSubmit={handleSubmit}>
           <Title>LOGIN</Title>
@@ -188,6 +204,7 @@ function Login(): JSX.Element {
           )}
           <ButtonComponent type="submit">Enviar</ButtonComponent>
         </Form>
+        <Image src={Logo} alt="Logo" />
       </Banner>
     </div>
   );

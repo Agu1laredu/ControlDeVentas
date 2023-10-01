@@ -25,8 +25,11 @@ const Section = styled.section`
   margin-left: 100px;
   border: 2px solid #242527;
   padding: 50px;
-  width: 80vw;
+  width: 70vw;
   border-radius: 15px;
+  @media (max-width: 1280px) {
+    width: 75vw;
+  }
 `;
 
 const ButtonEditar = styled.button`
@@ -62,7 +65,6 @@ const TablaContainer = styled.div`
   top: 30px;
   width: 100%;
   padding: 20px;
-  borderradius: 20px;
 `;
 
 interface Clients {
@@ -267,9 +269,15 @@ function ClientsCode() {
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>{clients.LastName}</th>
-                  <th>{clients.Apellido}</th>
-                  <th>{clients.Telefono}</th>
+                  <td style={{ width: "100px", fontSize: 20 }}>
+                    {clients.LastName}
+                  </td>
+                  <td style={{ width: "100px", fontSize: 20 }}>
+                    {clients.Apellido}
+                  </td>
+                  <td style={{ width: "100px", fontSize: 20 }}>
+                    {clients.Telefono}
+                  </td>
                   <th>
                     <div
                       className="ContainerItem"
