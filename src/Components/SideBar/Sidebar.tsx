@@ -37,7 +37,7 @@ function BasicExample() {
         throw error;
       }
       // Redirige al usuario a la página de inicio de sesión
-      navigate("/Login");
+      navigate("/login");
     } catch (error) {
       console.error("Error al hacer logout:", error);
     }
@@ -56,13 +56,13 @@ function BasicExample() {
             <Link to={`/`} className="Links">
               Inicio
             </Link>
-            <Link to={`/Productos`} className="Links">
+            <Link to={`/productos`} className="Links">
               Productos
             </Link>
-            <Link to={`/Clientes`} className="Links">
+            <Link to={`/clientes`} className="Links">
               Clientes
             </Link>
-            <Link to={`/Ventas`} className="Links">
+            <Link to={`/ventas`} className="Links">
               Ventas
             </Link>
             <ButtonLogout onClick={signOut}>Logout</ButtonLogout>

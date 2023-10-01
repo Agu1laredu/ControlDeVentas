@@ -19,10 +19,10 @@ if (rootElement) {
     <React.StrictMode>
       <BrowserRouter>
         <Routes>
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Productos" element={<Productos />} />
-          <Route path="/Ventas" element={<Ventas />} />
-          <Route path="/Clientes" element={<Clientes />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/productos" element={<Productos />} />
+          <Route path="/ventas" element={<Ventas />} />
+          <Route path="/clientes" element={<Clientes />} />
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
