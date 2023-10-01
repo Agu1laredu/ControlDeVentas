@@ -121,7 +121,7 @@ function ButtonComponent({
   );
 }
 
-function Login(): JSX.Element {
+function Login() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
