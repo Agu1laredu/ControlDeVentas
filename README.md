@@ -1,41 +1,44 @@
-# React + TypeScript + Vite + Styled-components
+
+# Sistema de Control de Ventas con React, TypeScript, Vite y Styled-components
+Descripción del Proyecto
+Este proyecto nace de la necesidad de establecer un control efectivo de las ventas en un emprendimiento familiar. Actualmente, la administración de ventas carece de un proceso estructurado, lo que motiva la creación de esta aplicación para simplificar y mejorar la gestión de ventas.
+
+## Funcionalidades Principales
+1. Registro de Productos
+El sistema permite registrar nuevos productos de manera sencilla. Cada producto deberá incluir información básica como nombre, precio y talla. Estos productos se añaden a la lista de productos disponibles para su posterior registro en las ventas.
+
+2. Registro de Clientes
+Los clientes también pueden ser registrados en la plataforma. Los datos requeridos incluyen nombre, apellido y número de teléfono. Estos registros de clientes se utilizan para asociar las ventas a clientes específicos.
+
+3. Registro de Ventas y Generación de PDF
+La aplicación registra las interacciones entre productos y clientes como ventas. Cuando se realiza una venta, se genera un PDF con información detallada de la transacción. Además, el monto de la venta se suma al total del mes en curso. Al finalizar cada mes, se genera un PDF con un resumen de todas las ventas del mes.
+
+4. Gestión de Usuarios
+Se implementará un sistema de usuarios para almacenar todas las transacciones realizadas por cada usuario. Esto garantiza la trazabilidad de las acciones realizadas en la plataforma.
+
+## Componentes y Tareas Requeridas
+Para lograr estas funcionalidades, el proyecto se dividirá en las siguientes partes:
+
+1. Backend de Usuario
+Se desarrollará un backend que gestionará la autenticación de usuarios y almacenará las transacciones realizadas.
+
+2. Sistema CRUD (Crear, Leer, Actualizar, Eliminar)
+Se creará un sistema CRUD tanto para clientes como para productos en el backend. Esto permitirá la gestión completa de registros.
+
+3. Funcionalidades del Sistema CRUD en el Frontend
+Se implementará la interfaz de usuario para interactuar con el sistema CRUD. Los usuarios podrán crear, eliminar, editar y agregar clientes y productos.
+
+4. Diseño Adaptativo
+La interfaz de usuario será adaptable y responsive, brindando una experiencia óptima en dispositivos de escritorio y tabletas.
+5. Interacción de Ventas
+Se desarrollarán dropdowns para buscar productos y clientes al registrar una venta. Esto facilitará la selección del cliente que realiza la compra, los productos adquiridos y sus cantidades. Esta información se registrará en el historial del cliente y en los registros de ventas mensuales.
+
+6. Instrucciones para Ejecutar el Proyecto
+Para levantar el proyecto en tu entorno de desarrollo, sigue estos pasos:
+
+- Clona el repositorio a tu máquina local.
+- Ejecuta el comando yarn install para instalar las dependencias del proyecto.
+- Inicia la aplicación con yarn run dev.
 
 
-# ¿De que consta el proyecto? 
-
-- Es un proyecto fomentado por la idea de falta de control de las ventas en un Emprendimiento familiar , este carece de tal practica y para solucionar la simpletud con la que se introducira esta nueva practica de administración se dará vida a este proyecto 
-
-# Sistema de control de ventas : 
-
-
-[Añadir-Un-Producto]
-
-- Este proyecto tendra la capacidad de registrar un nuevo producto cuando se lo tenga/ desee para asi añadirlo a la lista de productos que se utilizara para el registro de ventas, el producto debera requerir cierta información o requisitos ( nombre producto, precio, talle  )
-
-
-[Añadir-Un-Cliente]
-
-- Este proyecto tendra la capacidad de registrar un nuevo cliente cuando se lo tenga/ desee para asi añadirlo a la lista de clientes que se utilizara para el registro de ventas , el producto debera requerir cierta información o requisitos ( nombre , apellido, telefono  )
-
-[Registrar-La-Venta-y-Generar-PDF]
-
-
-- Se registrar la interaccion que tendran los productos y los clientes tomandolas como ventas, en base a esta información primero, por darse el hecho se creara un pdf con la imformacion detallada de la transaccion y luego el monto adquiirido pasara a sumar en la cantidad de dineri que se registra en el mes adquirido por estos procesos  ( al terminar un mes y comenzar otro, este contador debera reiniciarse para no confundir el momento en que se esta ejecutando )
-
-- Al finalizar cada mes tambien se generara un pdf con la informacion detallada de cada mes 
-# para lograr esto se necesita : 
-
-[Usuario] : Se debera crear un backend para un sistema de ususario y asi poder dejar guardado en la base de datos todas las transacciones realizadas por el dicho usuario 
-
-- [sistema-crud] : Este consta de la lista para poder crear, eliminar, editar y agregar tanto un cliente como un producto  ( #Backend )
-- [Funcionalidades-Sistema-Crud] : Crear TableData y conectarla a la DB para poder realizar las funcionalidades de sistema crud ( #FrontEnd )
-- [diseño-adaptativo-pc-tablet] : Crear diseño adaptativo-responsive  ( #FrontEnd )
-- [Interacción-De-Venta] :  se debera crear drowpdowns donde se puedan buscar tanto los productos como los clientes para elegir que cliente realiza la compra y que producto esta comprando y sus cantidades, en base a este suceso se crea el registro al cliente sumandoselo en su historial y en nuestro registro y a la vez sumando los montos de lo vendido a nuestro registro final del mes 
-
-
-# Para levantar el proyecto sigue el siguiente proceso: 
-- clonar el repositorio
-- yarn install 
-- yarn run dev 
-
-
+¡Disfruta de una gestión eficiente de ventas con esta aplicación! Siéntete libre de contribuir y mejorarlo según tus necesidades.
