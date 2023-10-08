@@ -2,12 +2,9 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
-import "bootstrap/dist/css/bootstrap.min.css";
-import DropdownComponent from "./Components/DrowpDown/Dropdown ";
-
 import ButtonSend from "../../Components/Button/Button";
 import styled from "styled-components";
-
+import { client } from "../../supabase/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Formproduct = styled.form`
@@ -46,10 +43,12 @@ const ButtonEditar = styled.button`
   :hover {
     border-color: #646cff;
   }
+
   :focus,
   :focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
   }
+
   @media (max-width: 700px) {
     width: 100%;
     margin: auto;
@@ -58,20 +57,34 @@ const ButtonEditar = styled.button`
     top: 20%;
   }
 `;
+
 const TablaContainer = styled.div`
   position: relative;
   margin: auto;
   top: 30px;
   width: 100%;
   padding: 20px;
-  borderradius: 20px;
+  border-radius: 20px;
 `;
 
 interface Ventas {
   id: number;
   cliente: string;
-  pruducto: string;
+  producto: string;
   cantidad: number;
+}
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  Talle: string;
+}
+
+interface Clients {
+  id: number;
+  LastName: string;
+  Apellido: string;
+  Telefono: number;
 }
 
 class VentasManager {
@@ -91,49 +104,46 @@ class VentasManager {
     const productsData = localStorage.getItem("ventas");
     if (productsData) {
       this.ventas = JSON.parse(productsData);
-      this.nextId =
-        this.ventas.reduce((maxId, ventas) => Math.max(maxId, ventas.id), 0) +
-        1;
+      this.nextId = Math.max(...this.ventas.map((ventas) => ventas.id), 0) + 1;
     }
   }
 
-  // Agregar un nuevo producto
-  addProduct(cliente: string, pruducto: string, cantidad: number): void {
+  addProduct(cliente: string, producto: string, cantidad: number): void {
     const newProduct: Ventas = {
       id: this.nextId,
       cliente,
-      pruducto,
+      producto,
       cantidad,
     };
 
     this.ventas.push(newProduct);
     this.nextId++;
+    this.saveProductsToLocalStorage();
   }
 
-  // Editar un producto existente por ID
   editProduct(
     id: number,
     cliente: string,
-    pruducto: string,
+    producto: string,
     cantidad: number
   ): void {
     const index = this.ventas.findIndex((ventas) => ventas.id === id);
 
     if (index !== -1) {
       this.ventas[index].cliente = cliente;
-      this.ventas[index].pruducto = pruducto;
+      this.ventas[index].producto = producto;
       this.ventas[index].cantidad = cantidad;
+      this.saveProductsToLocalStorage();
     } else {
       console.log("Producto no encontrado");
     }
   }
 
-  // Eliminar un producto existente por ID
   deleteProduct(id: number): void {
     this.ventas = this.ventas.filter((ventas) => ventas.id !== id);
+    this.saveProductsToLocalStorage();
   }
 
-  // Obtener todos los productos
   getProducts(): Ventas[] {
     return this.ventas;
   }
@@ -143,20 +153,46 @@ function VentasRealizadas() {
   const [productList, setProductList] = useState<Ventas[]>([]);
   const [currentProduct, setCurrentProduct] = useState<Ventas | null>(null);
   const ventassManager = new VentasManager();
+  const [clients, setClients] = useState<Clients[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedClientId, setSelectedClientId] = useState<string>("");
+  const [selectedProductId, setSelectedProductId] = useState<string>("");
 
   useEffect(() => {
-    ventassManager.loadProductsFromLocalStorage();
-    setProductList(ventassManager.getProducts());
+    async function fetchData() {
+      try {
+        // Obtener datos de clientes desde Supabase
+        const clientsResponse = await client.from("Clients").select("*");
+        if (!clientsResponse.error) {
+          setClients(clientsResponse.data);
+        }
+
+        // Obtener datos de productos desde Supabase
+        const productsResponse = await client.from("Products").select("*");
+        if (!productsResponse.error) {
+          setProducts(productsResponse.data);
+        }
+
+        // Obtener datos de ventas desde Supabase
+        const ventasResponse = await client.from("Ventas").select("*");
+        if (!ventasResponse.error) {
+          setProductList(ventasResponse.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
   }, []);
 
-  // Función para manejar el envío del formulario de agregar/editar producto
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const cliente = formData.get("cliente") as string;
-    const cantidad = parseFloat(formData.get("cantidad") as string);
-    const producto = formData.get("producto") as string;
+    const cliente = String(formData.get("cliente"));
+    const cantidad = parseFloat(String(formData.get("Cantidad")));
+    const producto = String(formData.get("producto"));
 
     if (currentProduct) {
       ventassManager.editProduct(
@@ -170,46 +206,36 @@ function VentasRealizadas() {
       ventassManager.addProduct(cliente, producto, cantidad);
     }
 
-    ventassManager.saveProductsToLocalStorage(); // Guardamos los productos en el localStorage
-    setProductList(ventassManager.getProducts());
+    try {
+      // Insertar datos en Supabase
+      const result = await client.from("Ventas").insert([
+        {
+          cliente,
+          producto,
+          cantidad,
+        },
+      ]);
+
+      console.log(result);
+
+      // Guardar datos en el almacenamiento local después de cada modificación
+      ventassManager.saveProductsToLocalStorage();
+      setProductList(ventassManager.getProducts());
+    } catch (error) {
+      console.error("Error inserting sale:", error);
+    }
   };
 
-  // Función para eliminar un producto
   const handleDeleteProduct = (id: number) => {
     ventassManager.deleteProduct(id);
-    ventassManager.saveProductsToLocalStorage(); // Guardamos los productos en el localStorage
+    ventassManager.saveProductsToLocalStorage();
     setProductList(ventassManager.getProducts());
   };
 
-  // Función para editar un producto
   const handleEditProduct = (product: Ventas) => {
     setCurrentProduct(product);
   };
 
-  // Luego en tu componente App, donde tienes los arrays de Clientes y Productos:
-  const Clientes = [
-    {
-      name: "Hector",
-    },
-    {
-      name: "Hugo",
-    },
-    {
-      name: "Jeronimo",
-    },
-  ];
-
-  const Productos = [
-    {
-      name: "Buzos Esc Oroño",
-    },
-    {
-      name: "Remeras Maxi kiosco",
-    },
-    {
-      name: "Camperas Colores Primarios",
-    },
-  ];
   return (
     <div
       style={{
@@ -222,66 +248,106 @@ function VentasRealizadas() {
       <Section>
         <h1>VENTAS</h1>
 
-        {/* Formulario para agregar/editar productos */}
         <Formproduct onSubmit={handleFormSubmit}>
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
-            <label htmlFor="cliente"></label>
-            <DropdownComponent title="Clientes" options={Clientes} />
+            <select
+              name="cliente"
+              required
+              value={selectedClientId}
+              onChange={(e) => setSelectedClientId(e.target.value)}
+            >
+              <option value="">Seleccione un cliente</option>
+              {clients.map((client) => (
+                <option key={client.id} value={client.id.toString()}>
+                  {client.LastName}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
-            <label htmlFor="producto"></label>
-            <DropdownComponent title="Productos" options={Productos} />
+            <select
+              name="producto"
+              required
+              value={selectedProductId}
+              onChange={(e) => setSelectedProductId(e.target.value)}
+            >
+              <option value="">Seleccione un Producto</option>
+              {products.map((product) => (
+                <option key={product.id} value={product.id.toString()}>
+                  {product.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
-            <label htmlFor="cantidad">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Cantidad :</b>
-            </label>
+            <label htmlFor="cantidad">Cantidad:</label>
             <input
-              style={{ width: "80px", height: "50px", marginLeft: "20px" }}
               type="number"
               name="cantidad"
-              step="0.01"
+              step="1"
               defaultValue={currentProduct?.cantidad ?? ""}
               required
             />
           </div>
+
           <ButtonEditar type="submit">
-            {currentProduct ? "Editar Cliente" : "Agregar Cliente"}
+            {currentProduct ? "Editar Venta" : "Registrar Venta"}
           </ButtonEditar>
         </Formproduct>
 
-        {/* Mostrar los productos agregados */}
-        {productList.map((product) => (
-          <TablaContainer key={product.id}>
+        {productList.length > 0 && (
+          <TablaContainer>
             <Table striped bordered hover>
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>{product.cliente}</th>
-                  <th>{product.pruducto}</th>
-                  <th>{product.cantidad}</th>
-                  <th>
-                    <div
-                      className="ContainerItem"
-                      style={{ display: "flex", justifyContent: "center" }}
-                    >
-                      <ButtonSend onClick={() => handleEditProduct(product)}>
-                        Editar
-                      </ButtonSend>
-                      <ButtonSend
-                        onClick={() => handleDeleteProduct(product.id)}
-                      >
-                        Eliminar
-                      </ButtonSend>
-                    </div>
-                  </th>
+                  <th>Cliente</th>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio de Venta</th>
                 </tr>
               </thead>
+              <tbody>
+                {productList.map((product) => {
+                  const selectedClient = clients.find(
+                    (c) => c.id.toString() === product.cliente
+                  );
+                  const selectedProduct = products.find(
+                    (p) => p.id.toString() === product.producto
+                  );
+                  const totalPrice =
+                    selectedProduct &&
+                    !isNaN(selectedProduct.price) &&
+                    !isNaN(product.cantidad)
+                      ? selectedProduct.price * product.cantidad
+                      : 0;
+
+                  return (
+                    <tr key={product.id}>
+                      <td>{product.id}</td>
+                      <td>{selectedClient?.LastName}</td>
+                      <td>{selectedProduct?.name}</td>
+                      <td>{product.cantidad}</td>
+                      <td>${totalPrice.toFixed(2)}</td>
+                      <td>
+                        <ButtonSend onClick={() => handleEditProduct(product)}>
+                          Editar
+                        </ButtonSend>
+                        <ButtonSend
+                          onClick={() => handleDeleteProduct(product.id)}
+                        >
+                          Eliminar
+                        </ButtonSend>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
             </Table>
           </TablaContainer>
-        ))}
+        )}
       </Section>
     </div>
   );

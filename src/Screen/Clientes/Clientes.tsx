@@ -149,8 +149,19 @@ function ClientsCode() {
   const clientsManager = new ClientsManager();
 
   useEffect(() => {
-    clientsManager.loadClientsFromLocalStorage();
-    setClientList(clientsManager.getClients());
+    async function fetchData() {
+      try {
+        // Obtener datos de clientes desde Supabase
+        const clientsResponse = await client.from("Clients").select("*");
+        if (!clientsResponse.error) {
+          setClientList(clientsResponse.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
   }, []);
 
   // Función para manejar el envío del formulario de agregar/editar producto

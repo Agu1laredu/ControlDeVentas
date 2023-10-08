@@ -147,8 +147,19 @@ function Productos() {
   const productManager = new ProductManager();
 
   useEffect(() => {
-    productManager.loadProductsFromLocalStorage();
-    setProductList(productManager.getProducts());
+    async function fetchData() {
+      try {
+        // Obtener datos de productos desde Supabase
+        const productsResponse = await client.from("Products").select("*");
+        if (!productsResponse.error) {
+          setProductList(productsResponse.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
   }, []);
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
