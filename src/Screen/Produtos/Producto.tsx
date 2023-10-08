@@ -192,33 +192,58 @@ function Productos() {
       throw error;
     }
   };
-
   // Función para eliminar un producto
   const handleDeleteProduct = async (id: number) => {
     try {
       // Elimina el producto de la base de datos de Supabase
-      const result = await client.from("Products").delete().eq("id", id);
+      const { error } = await client.from("Products").delete().eq("id", id);
 
-      console.log(result);
+      if (!error) {
+        // Elimina el producto localmente
+        productManager.deleteProduct(id);
+        productManager.saveProductsToLocalStorage();
 
-      // Elimina el producto localmente
-      productManager.deleteProduct(id);
-      productManager.saveProductsToLocalStorage();
-
-      // Actualiza la lista de productos excluyendo el producto eliminado
-      const updatedProductList = productList.filter(
-        (product) => product.id !== id
-      );
-      setProductList(updatedProductList);
+        // Actualiza la lista de productos excluyendo el producto eliminado
+        const updatedProductList = productList.filter(
+          (product) => product.id !== id
+        );
+        setProductList(updatedProductList);
+      } else {
+        console.error("Error deleting product:", error);
+      }
     } catch (error) {
-      console.error(error);
-      throw error;
+      console.error("Error deleting product:", error);
     }
   };
 
   // Función para editar un producto
-  const handleEditProduct = (product: Product) => {
-    setCurrentProduct(product);
+  const handleEditProduct = async (product: Product) => {
+    try {
+      // Actualiza el producto en la base de datos de Supabase
+      const { error } = await client.from("Products").upsert([product]);
+
+      if (!error) {
+        // Actualiza el producto localmente
+        productManager.editProduct(
+          product.id,
+          product.name,
+          product.price,
+          product.Talle
+        );
+        productManager.saveProductsToLocalStorage();
+
+        // Actualiza la lista de productos
+        const updatedProductList = productList.map((p) =>
+          p.id === product.id ? product : p
+        );
+        setProductList(updatedProductList);
+        setCurrentProduct(null);
+      } else {
+        console.error("Error updating product:", error);
+      }
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
   };
 
   return (

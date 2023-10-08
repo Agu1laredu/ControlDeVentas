@@ -195,28 +195,58 @@ function ClientsCode() {
       throw error;
     }
   };
-  // Función para eliminar un producto
+  // Función para eliminar un cliente
   const handleDeleteProduct = async (id: number) => {
     try {
-      // Elimina el producto de la base de datos de Supabase
-      const result = await client.from("Clients").delete().eq("id", id);
+      // Elimina el cliente de la base de datos de Supabase
+      const { error } = await client.from("Clients").delete().eq("id", id);
 
-      console.log(result);
+      if (!error) {
+        // Elimina el cliente localmente
+        clientsManager.deleteClient(id);
+        clientsManager.saveClientsToLocalStorage();
 
-      // Elimina el producto localmente
-      clientsManager.deleteClient(id);
-      clientsManager.saveClientsToLocalStorage();
-      const updateClientList = clientList.filter((client) => client.id !== id);
-      setClientList(updateClientList);
+        // Actualiza la lista de clientes excluyendo el cliente eliminado
+        const updatedClientList = clientList.filter(
+          (client) => client.id !== id
+        );
+        setClientList(updatedClientList);
+      } else {
+        console.error("Error deleting client:", error);
+      }
     } catch (error) {
-      console.error(error);
-      throw error;
+      console.error("Error deleting client:", error);
     }
   };
 
-  // Función para editar un producto
-  const handleEditProduct = (clients: Clients) => {
-    setCurrentClient(clients);
+  // Función para editar un cliente
+  const handleEditClient = async (clientData: Clients) => {
+    try {
+      // Actualiza el cliente en la base de datos de Supabase
+      const { error } = await client.from("Clients").upsert([clientData]);
+
+      if (!error) {
+        // Actualiza el cliente localmente
+        clientsManager.editClient(
+          clientData.id,
+          clientData.LastName,
+          clientData.Apellido,
+          clientData.Telefono
+        );
+        clientsManager.saveClientsToLocalStorage();
+
+        // Actualiza la lista de clientes
+        const updatedClientList = clientList.map((c) =>
+          c.id === clientData.id ? clientData : c
+        );
+        setClientList(updatedClientList);
+        setCurrentClient(null);
+      } else {
+        console.error("Error updating client:", error);
+      }
+    } catch (error) {
+      console.error("Error updating client:", error);
+    }
   };
 
   return (
@@ -294,7 +324,7 @@ function ClientsCode() {
                       className="ContainerItem"
                       style={{ display: "flex", justifyContent: "center" }}
                     >
-                      <ButtonSend onClick={() => handleEditProduct(clients)}>
+                      <ButtonSend onClick={() => handleEditClient(clients)}>
                         Editar
                       </ButtonSend>
                       <ButtonSend
