@@ -146,6 +146,7 @@ class ClientsManager {
 function ClientsCode() {
   const [clientList, setClientList] = useState<Clients[]>([]);
   const [currentClient, setCurrentClient] = useState<Clients | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Agregar estado para controlar la carga
   const clientsManager = new ClientsManager();
 
   useEffect(() => {
@@ -156,11 +157,11 @@ function ClientsCode() {
         if (!clientsResponse.error) {
           setClientList(clientsResponse.data);
         }
+        setIsLoading(false); // Cambiar el estado de carga a falso una vez que se carguen los datos
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
-
     fetchData();
   }, []);
 
@@ -304,41 +305,50 @@ function ClientsCode() {
         </Formproduct>
 
         {/* Mostrar los productos agregados */}
-        {clientList.map((clients) => (
-          <TablaContainer key={clients.id}>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <td style={{ width: "100px", fontSize: 20 }}>
-                    {clients.LastName}
-                  </td>
-                  <td style={{ width: "100px", fontSize: 20 }}>
-                    {clients.Apellido}
-                  </td>
-                  <td style={{ width: "100px", fontSize: 20 }}>
-                    {clients.Telefono}
-                  </td>
-                  <th>
-                    <div
-                      className="ContainerItem"
-                      style={{ display: "flex", justifyContent: "center" }}
-                    >
-                      <ButtonSend onClick={() => handleEditClient(clients)}>
-                        Editar
-                      </ButtonSend>
-                      <ButtonSend
-                        onClick={() => handleDeleteProduct(clients.id)}
+        {isLoading ? (
+          <div>
+            <section style={{ margin: "100px auto", textAlign: "center" }}>
+              <h4>CARGANDO DATOS</h4>
+              <p>ESPERA UN MOMENTO</p>
+            </section>
+          </div>
+        ) : (
+          clientList.map((clients) => (
+            <TablaContainer key={clients.id}>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <td style={{ width: "100px", fontSize: 20 }}>
+                      {clients.LastName}
+                    </td>
+                    <td style={{ width: "100px", fontSize: 20 }}>
+                      {clients.Apellido}
+                    </td>
+                    <td style={{ width: "100px", fontSize: 20 }}>
+                      {clients.Telefono}
+                    </td>
+                    <th>
+                      <div
+                        className="ContainerItem"
+                        style={{ display: "flex", justifyContent: "center" }}
                       >
-                        Eliminar
-                      </ButtonSend>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-            </Table>
-          </TablaContainer>
-        ))}
+                        <ButtonSend onClick={() => handleEditClient(clients)}>
+                          Editar
+                        </ButtonSend>
+                        <ButtonSend
+                          onClick={() => handleDeleteProduct(clients.id)}
+                        >
+                          Eliminar
+                        </ButtonSend>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+              </Table>
+            </TablaContainer>
+          ))
+        )}
       </Section>
     </div>
   );

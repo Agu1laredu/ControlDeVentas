@@ -144,6 +144,7 @@ class ProductManager {
 function Productos() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Agregar estado para controlar la carga
   const productManager = new ProductManager();
 
   useEffect(() => {
@@ -154,11 +155,11 @@ function Productos() {
         if (!productsResponse.error) {
           setProductList(productsResponse.data);
         }
+        setIsLoading(false); // Cambiar el estado de carga a falso una vez que se carguen los datos
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
-
     fetchData();
   }, []);
 
@@ -302,45 +303,56 @@ function Productos() {
 
         {/* Mostrar los productos agregados */}
 
-        {productList.map((product) => (
-          <TablaContainer key={product.id}>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <td style={{ width: "100px", fontSize: 20 }}>
-                    {product.name}
-                  </td>
-                  <td style={{ width: "100px", fontSize: 20 }}>
-                    {product.Talle}
-                  </td>
-                  <td style={{ width: "100px", fontSize: 20, color: "green" }}>
-                    ${product.price}
-                  </td>
-                  <div
-                    className="ContainerItem"
-                    style={{
-                      position: "relative",
-                      left: "20%",
-                      width: "300px",
-                      display: "flex",
-                    }}
-                  >
-                    <ButtonSend onClick={() => handleEditProduct(product)}>
-                      Editar
-                    </ButtonSend>
-                    <ButtonSend
-                      onClick={() => handleDeleteProduct(product.id)}
-                      key={`delete-${product.id}`}
+        {isLoading ? (
+          <div>
+            <section style={{ margin: "100px auto", textAlign: "center" }}>
+              <h4>CARGANDO DATOS</h4>
+              <p>ESPERA UN MOMENTO</p>
+            </section>
+          </div>
+        ) : (
+          productList.map((product) => (
+            <TablaContainer key={product.id}>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <td style={{ width: "100px", fontSize: 20 }}>
+                      {product.name}
+                    </td>
+                    <td style={{ width: "100px", fontSize: 20 }}>
+                      {product.Talle}
+                    </td>
+                    <td
+                      style={{ width: "100px", fontSize: 20, color: "green" }}
                     >
-                      Eliminar
-                    </ButtonSend>
-                  </div>
-                </tr>
-              </thead>
-            </Table>
-          </TablaContainer>
-        ))}
+                      ${product.price}
+                    </td>
+                    <div
+                      className="ContainerItem"
+                      style={{
+                        position: "relative",
+                        left: "20%",
+                        width: "300px",
+                        display: "flex",
+                      }}
+                    >
+                      <ButtonSend onClick={() => handleEditProduct(product)}>
+                        Editar
+                      </ButtonSend>
+                      <ButtonSend
+                        onClick={() => handleDeleteProduct(product.id)}
+                        key={`delete-${product.id}`}
+                      >
+                        Eliminar
+                      </ButtonSend>
+                    </div>
+                  </tr>
+                </thead>
+              </Table>
+            </TablaContainer>
+          ))
+        )}
       </Section>
     </div>
   );

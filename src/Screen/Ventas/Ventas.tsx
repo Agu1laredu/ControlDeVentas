@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
 import ButtonSend from "../../Components/Button/Button";
@@ -7,7 +6,7 @@ import styled from "styled-components";
 import { client } from "../../supabase/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const Formproduct = styled.form`
+const FormVenta = styled.form`
   padding: 20px;
   margin: auto;
   display: flex;
@@ -73,6 +72,7 @@ interface Ventas {
   producto: string;
   cantidad: number;
 }
+
 interface Product {
   id: number;
   name: string;
@@ -87,97 +87,35 @@ interface Clients {
   Telefono: number;
 }
 
-class VentasManager {
-  private ventas: Ventas[];
-  private nextId: number;
-
-  constructor() {
-    this.ventas = [];
-    this.nextId = 1;
-  }
-
-  saveProductsToLocalStorage(): void {
-    localStorage.setItem("ventas", JSON.stringify(this.ventas));
-  }
-
-  loadProductsFromLocalStorage(): void {
-    const productsData = localStorage.getItem("ventas");
-    if (productsData) {
-      this.ventas = JSON.parse(productsData);
-      this.nextId = Math.max(...this.ventas.map((ventas) => ventas.id), 0) + 1;
-    }
-  }
-
-  addProduct(cliente: string, producto: string, cantidad: number): void {
-    const newProduct: Ventas = {
-      id: this.nextId,
-      cliente,
-      producto,
-      cantidad,
-    };
-
-    this.ventas.push(newProduct);
-    this.nextId++;
-    this.saveProductsToLocalStorage();
-  }
-
-  editProduct(
-    id: number,
-    cliente: string,
-    producto: string,
-    cantidad: number
-  ): void {
-    const index = this.ventas.findIndex((ventas) => ventas.id === id);
-
-    if (index !== -1) {
-      this.ventas[index].cliente = cliente;
-      this.ventas[index].producto = producto;
-      this.ventas[index].cantidad = cantidad;
-      this.saveProductsToLocalStorage();
-    } else {
-      console.log("Producto no encontrado");
-    }
-  }
-
-  deleteProduct(id: number): void {
-    this.ventas = this.ventas.filter((ventas) => ventas.id !== id);
-    this.saveProductsToLocalStorage();
-  }
-
-  getProducts(): Ventas[] {
-    return this.ventas;
-  }
-}
-
 function VentasRealizadas() {
   const [productList, setProductList] = useState<Ventas[]>([]);
   const [currentProduct, setCurrentProduct] = useState<Ventas | null>(null);
-  const ventassManager = new VentasManager();
   const [clients, setClients] = useState<Clients[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedClientId, setSelectedClientId] = useState<string>("");
   const [selectedProductId, setSelectedProductId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const tableRef = useRef(null);
   useEffect(() => {
     async function fetchData() {
       try {
-        // Obtener datos de clientes desde Supabase
         const clientsResponse = await client.from("Clients").select("*");
         if (!clientsResponse.error) {
           setClients(clientsResponse.data);
         }
 
-        // Obtener datos de productos desde Supabase
         const productsResponse = await client.from("Products").select("*");
         if (!productsResponse.error) {
           setProducts(productsResponse.data);
         }
 
-        // Obtener datos de ventas desde Supabase
         const ventasResponse = await client.from("Ventas").select("*");
         if (!ventasResponse.error) {
           setProductList(ventasResponse.data);
         }
+
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -194,20 +132,7 @@ function VentasRealizadas() {
     const cantidad = parseFloat(String(formData.get("Cantidad")));
     const producto = String(formData.get("producto"));
 
-    if (currentProduct) {
-      ventassManager.editProduct(
-        currentProduct.id,
-        cliente,
-        producto,
-        cantidad
-      );
-      setCurrentProduct(null);
-    } else {
-      ventassManager.addProduct(cliente, producto, cantidad);
-    }
-
     try {
-      // Insertar datos en Supabase
       const result = await client.from("Ventas").insert([
         {
           cliente,
@@ -218,22 +143,52 @@ function VentasRealizadas() {
 
       console.log(result);
 
-      // Guardar datos en el almacenamiento local después de cada modificación
-      ventassManager.saveProductsToLocalStorage();
-      setProductList(ventassManager.getProducts());
+      if (result.data) {
+        if (Array.isArray(result.data)) {
+          setProductList([...productList, ...result.data]);
+        } else {
+          setProductList([...productList, result.data]);
+        }
+      }
+
+      setCurrentProduct(null);
     } catch (error) {
       console.error("Error inserting sale:", error);
     }
   };
 
-  const handleDeleteProduct = (id: number) => {
-    ventassManager.deleteProduct(id);
-    ventassManager.saveProductsToLocalStorage();
-    setProductList(ventassManager.getProducts());
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      const { error } = await client.from("Ventas").delete().eq("id", id);
+
+      if (!error) {
+        setProductList((prevList) =>
+          prevList.filter((venta) => venta.id !== id)
+        );
+      } else {
+        console.error("Error deleting sale:", error);
+      }
+    } catch (error) {
+      console.error("Error deleting sale:", error);
+    }
   };
 
   const handleEditProduct = (product: Ventas) => {
     setCurrentProduct(product);
+  };
+
+  const calculateTotalPrice = () => {
+    let totalPrice = 0;
+    productList.forEach((product) => {
+      const selectedProduct = products.find(
+        (p) => p.id.toString() === product.producto
+      );
+      if (selectedProduct) {
+        const price = selectedProduct.price * product.cantidad;
+        totalPrice += price;
+      }
+    });
+    return totalPrice;
   };
 
   return (
@@ -247,8 +202,7 @@ function VentasRealizadas() {
 
       <Section>
         <h1>VENTAS</h1>
-
-        <Formproduct onSubmit={handleFormSubmit}>
+        <FormVenta onSubmit={handleFormSubmit}>
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <select
               name="cliente"
@@ -285,7 +239,7 @@ function VentasRealizadas() {
             <label htmlFor="cantidad">Cantidad:</label>
             <input
               type="number"
-              name="cantidad"
+              name="Cantidad"
               step="1"
               defaultValue={currentProduct?.cantidad ?? ""}
               required
@@ -295,58 +249,72 @@ function VentasRealizadas() {
           <ButtonEditar type="submit">
             {currentProduct ? "Editar Venta" : "Registrar Venta"}
           </ButtonEditar>
-        </Formproduct>
+        </FormVenta>
 
-        {productList.length > 0 && (
-          <TablaContainer>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Cliente</th>
-                  <th>Producto</th>
-                  <th>Cantidad</th>
-                  <th>Precio de Venta</th>
-                </tr>
-              </thead>
-              <tbody>
-                {productList.map((product) => {
-                  const selectedClient = clients.find(
-                    (c) => c.id.toString() === product.cliente
-                  );
-                  const selectedProduct = products.find(
-                    (p) => p.id.toString() === product.producto
-                  );
-                  const totalPrice =
-                    selectedProduct &&
-                    !isNaN(selectedProduct.price) &&
-                    !isNaN(product.cantidad)
-                      ? selectedProduct.price * product.cantidad
-                      : 0;
+        {isLoading ? (
+          <div>
+            <section style={{ margin: "100px auto", textAlign: "center" }}>
+              <h4>CARGANDO DATOS</h4>
+              <p>ESPERA UN MOMENTO</p>
+            </section>
+          </div>
+        ) : (
+          productList.length > 0 && (
+            <TablaContainer>
+              <Table striped bordered hover ref={tableRef} id="my-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Cliente</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio de Venta</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productList.map((product) => {
+                    const selectedClient = clients.find(
+                      (c) => c.id.toString() === product.cliente
+                    );
+                    const selectedProduct = products.find(
+                      (p) => p.id.toString() === product.producto
+                    );
+                    const totalPrice =
+                      selectedProduct &&
+                      !isNaN(selectedProduct.price) &&
+                      !isNaN(product.cantidad)
+                        ? selectedProduct.price * product.cantidad
+                        : 0;
 
-                  return (
-                    <tr key={product.id}>
-                      <td>{product.id}</td>
-                      <td>{selectedClient?.LastName}</td>
-                      <td>{selectedProduct?.name}</td>
-                      <td>{product.cantidad}</td>
-                      <td>${totalPrice.toFixed(2)}</td>
-                      <td>
-                        <ButtonSend onClick={() => handleEditProduct(product)}>
-                          Editar
-                        </ButtonSend>
-                        <ButtonSend
-                          onClick={() => handleDeleteProduct(product.id)}
-                        >
-                          Eliminar
-                        </ButtonSend>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </TablaContainer>
+                    return (
+                      <tr key={product.id}>
+                        <td>{product.id}</td>
+                        <td>{selectedClient?.LastName}</td>
+                        <td>{selectedProduct?.name}</td>
+                        <td>{product.cantidad}</td>
+                        <td>${totalPrice.toFixed(2)}</td>
+                        <td>
+                          <ButtonSend
+                            onClick={() => handleEditProduct(product)}
+                          >
+                            Editar
+                          </ButtonSend>
+                          <ButtonSend
+                            onClick={() => handleDeleteProduct(product.id)}
+                          >
+                            Eliminar
+                          </ButtonSend>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+              <div style={{ textAlign: "right", marginTop: "20px" }}>
+                <strong>Total: ${calculateTotalPrice().toFixed(2)}</strong>
+              </div>
+            </TablaContainer>
+          )
         )}
       </Section>
     </div>
