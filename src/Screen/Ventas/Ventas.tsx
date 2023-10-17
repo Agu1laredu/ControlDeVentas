@@ -71,6 +71,7 @@ interface Ventas {
   cliente: string;
   producto: string;
   cantidad: number;
+  price: number; // Agregamos la columna "price"
 }
 
 interface Product {
@@ -97,8 +98,20 @@ function VentasRealizadas() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const tableRef = useRef(null);
+
+  const fetchVentas = async () => {
+    try {
+      const ventasResponse = await client.from("Ventas").select("*");
+      if (!ventasResponse.error) {
+        setProductList(ventasResponse.data);
+      }
+    } catch (error) {
+      console.error("Error fetching ventas:", error);
+    }
+  };
+
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       try {
         const clientsResponse = await client.from("Clients").select("*");
         if (!clientsResponse.error) {
@@ -110,16 +123,13 @@ function VentasRealizadas() {
           setProducts(productsResponse.data);
         }
 
-        const ventasResponse = await client.from("Ventas").select("*");
-        if (!ventasResponse.error) {
-          setProductList(ventasResponse.data);
-        }
+        await fetchVentas(); // Cargar ventas al inicio
 
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    }
+    };
 
     fetchData();
   }, []);
@@ -132,28 +142,44 @@ function VentasRealizadas() {
     const cantidad = parseFloat(String(formData.get("Cantidad")));
     const producto = String(formData.get("producto"));
 
-    try {
-      const result = await client.from("Ventas").insert([
-        {
-          cliente,
-          producto,
-          cantidad,
-        },
-      ]);
+    // Buscar el producto seleccionado
+    const selectedProduct = products.find((p) => p.id.toString() === producto);
 
-      console.log(result);
+    if (selectedProduct) {
+      const totalPrice = selectedProduct.price * cantidad;
+      try {
+        const result = await client.from("Ventas").insert([
+          {
+            cliente,
+            producto,
+            cantidad,
+            price: totalPrice, // Almacenar el precio total
+          },
+        ]);
 
-      if (result.data) {
-        if (Array.isArray(result.data)) {
-          setProductList([...productList, ...result.data]);
-        } else {
-          setProductList([...productList, result.data]);
+        console.log(result);
+
+        if (result.data) {
+          if (Array.isArray(result.data)) {
+            // Asegurarse de que cada elemento de la lista tenga un precio definido
+            (result.data as Ventas[]).forEach((item) => {
+              item.price = selectedProduct.price * item.cantidad;
+            });
+
+            setProductList([...productList, ...(result.data as Ventas[])]);
+          } else {
+            // Asegurarse de que el elemento tenga un precio definido
+            (result.data as Ventas).price =
+              selectedProduct.price * (result.data as Ventas).cantidad;
+
+            setProductList([...productList, result.data as Ventas]);
+          }
         }
-      }
 
-      setCurrentProduct(null);
-    } catch (error) {
-      console.error("Error inserting sale:", error);
+        setCurrentProduct(null);
+      } catch (error) {
+        console.error("Error inserting sale:", error);
+      }
     }
   };
 
