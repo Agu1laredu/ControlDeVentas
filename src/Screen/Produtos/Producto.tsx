@@ -87,11 +87,11 @@ class ProductManager {
   }
 
   saveProductsToLocalStorage(): void {
-    localStorage.setItem("products", JSON.stringify(this.products));
+    localStorage.setItem("Products", JSON.stringify(this.products));
   }
 
   loadProductsFromLocalStorage(): void {
-    const productsData = localStorage.getItem("products");
+    const productsData = localStorage.getItem("Products");
     if (productsData) {
       this.products = JSON.parse(productsData);
       this.nextId =
@@ -328,25 +328,27 @@ function Productos() {
                     >
                       ${product.price}
                     </td>
-                    <div
-                      className="ContainerItem"
-                      style={{
-                        position: "relative",
-                        left: "20%",
-                        width: "300px",
-                        display: "flex",
-                      }}
-                    >
-                      <ButtonSend onClick={() => handleEditProduct(product)}>
-                        Editar
-                      </ButtonSend>
-                      <ButtonSend
-                        onClick={() => handleDeleteProduct(product.id)}
-                        key={`delete-${product.id}`}
+                    <th>
+                      <div
+                        className="ContainerItem"
+                        style={{
+                          position: "relative",
+                          left: "20%",
+                          width: "300px",
+                          display: "flex",
+                        }}
                       >
-                        Eliminar
-                      </ButtonSend>
-                    </div>
+                        <ButtonSend onClick={() => handleEditProduct(product)}>
+                          Editar
+                        </ButtonSend>
+                        <ButtonSend
+                          onClick={() => handleDeleteProduct(product.id)}
+                          key={`delete-${product.id}`}
+                        >
+                          Eliminar
+                        </ButtonSend>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
               </Table>

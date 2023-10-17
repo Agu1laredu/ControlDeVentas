@@ -1,8 +1,7 @@
 import React, { useState, FormEvent } from "react";
-import { client } from "../../supabase/client.tsx";
+import { client } from "../../supabase/client";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/LogoVentas.png";
-
 import styled from "styled-components";
 
 interface ButtonProps {
@@ -128,11 +127,7 @@ function Login() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const registerUser = async (
-    name: string,
-    email: string,
-    password: string
-  ) => {
+  async function registerUser(name: string, email: string, password: string) {
     try {
       const { error } = await client.auth.signUp({
         email,
@@ -142,6 +137,7 @@ function Login() {
       if (error) {
         throw new Error(error.message);
       }
+
       // Inserta al usuario en la tabla 'profiles'
       const { data, error: profileError } = await client
         .from("profiles")
@@ -156,7 +152,7 @@ function Login() {
       console.error(error);
       throw error;
     }
-  };
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -170,7 +166,6 @@ function Login() {
       setError("Error al registrar usuario. Verifica tus credenciales.");
     }
   };
-
   return (
     <div style={{ display: "flex" }}>
       <Banner>
@@ -180,7 +175,7 @@ function Login() {
             type="text"
             name="name"
             id=""
-            placeholder="Name "
+            placeholder="Nombre"
             onChange={(e) => setName(e.target.value)}
           />
 
