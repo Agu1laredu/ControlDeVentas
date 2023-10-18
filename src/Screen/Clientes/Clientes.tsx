@@ -331,7 +331,12 @@ function ClientsCode() {
                     <th>
                       <div
                         className="ContainerItem"
-                        style={{ display: "flex", justifyContent: "center" }}
+                        style={{
+                          position: "relative",
+                          left: "20%",
+                          width: "300px",
+                          display: "flex",
+                        }}
                       >
                         <ButtonSend onClick={() => handleEditClient(clients)}>
                           Editar

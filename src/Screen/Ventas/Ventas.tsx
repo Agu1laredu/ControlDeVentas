@@ -3,8 +3,52 @@ import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
 import ButtonSend from "../../Components/Button/Button";
 import styled from "styled-components";
+import useForceUpdate from "./Components/forceUpdate";
 import { client } from "../../supabase/client";
 import "bootstrap/dist/css/bootstrap.min.css";
+import {
+  PDFViewer,
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+} from "@react-pdf/renderer";
+
+const styles = StyleSheet.create({
+  page: {
+    flexDirection: "row",
+    backgroundColor: "#E4E4E4",
+    padding: 10,
+  },
+  table: {
+    display: "flex",
+    width: "200%",
+    borderStyle: "solid",
+    borderColor: "#000",
+    borderWidth: 1,
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  row: {
+    flexDirection: "row",
+  },
+  cell: {
+    flex: 1,
+    padding: 5,
+    borderStyle: "solid",
+    borderColor: "#000",
+    borderWidth: 1,
+  },
+  headerCell: {
+    backgroundColor: "#646cff",
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  text: {
+    fontSize: 12,
+  },
+});
 
 const FormVenta = styled.form`
   padding: 20px;
@@ -99,11 +143,14 @@ function VentasRealizadas() {
 
   const tableRef = useRef(null);
 
+  const forceUpdate = useForceUpdate(); // Importa useForceUpdate de alguna fuente o crea tu propia función
+
   const fetchVentas = async () => {
     try {
       const ventasResponse = await client.from("Ventas").select("*");
       if (!ventasResponse.error) {
         setProductList(ventasResponse.data);
+        forceUpdate(); // Forzar actualización
       }
     } catch (error) {
       console.error("Error fetching ventas:", error);
@@ -132,6 +179,7 @@ function VentasRealizadas() {
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -227,7 +275,7 @@ function VentasRealizadas() {
       <Sidebar />
 
       <Section>
-        <h1>VENTAS</h1>
+        <h1 style={{ fontFamily: "Bold" }}>VENTAS</h1>
         <FormVenta onSubmit={handleFormSubmit}>
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <select
@@ -238,7 +286,11 @@ function VentasRealizadas() {
             >
               <option value="">Seleccione un cliente</option>
               {clients.map((client) => (
-                <option key={client.id} value={client.id.toString()}>
+                <option
+                  style={{ fontFamily: "Bold", fontSize: 20, margin: "auto" }}
+                  key={client.id}
+                  value={client.id.toString()}
+                >
                   {client.LastName}
                 </option>
               ))}
@@ -254,7 +306,11 @@ function VentasRealizadas() {
             >
               <option value="">Seleccione un Producto</option>
               {products.map((product) => (
-                <option key={product.id} value={product.id.toString()}>
+                <option
+                  style={{ fontFamily: "Bold", fontSize: 20, margin: "auto" }}
+                  key={product.id}
+                  value={product.id.toString()}
+                >
                   {product.name}
                 </option>
               ))}
@@ -262,8 +318,11 @@ function VentasRealizadas() {
           </div>
 
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
-            <label htmlFor="cantidad">Cantidad:</label>
+            <label htmlFor="cantidad" style={{ fontFamily: "Bold" }}>
+              Cantidad:
+            </label>
             <input
+              style={{ fontFamily: "Bold", fontSize: 20, margin: "auto" }}
               type="number"
               name="Cantidad"
               step="1"
@@ -314,23 +373,42 @@ function VentasRealizadas() {
 
                     return (
                       <tr key={product.id}>
-                        <td>{product.id}</td>
-                        <td>{selectedClient?.LastName}</td>
-                        <td>{selectedProduct?.name}</td>
-                        <td>{product.cantidad}</td>
-                        <td>${totalPrice.toFixed(2)}</td>
-                        <td>
-                          <ButtonSend
-                            onClick={() => handleEditProduct(product)}
-                          >
-                            Editar
-                          </ButtonSend>
-                          <ButtonSend
-                            onClick={() => handleDeleteProduct(product.id)}
-                          >
-                            Eliminar
-                          </ButtonSend>
+                        <td style={{ fontFamily: "Bold" }}>{product.id}</td>
+                        <td style={{ fontFamily: "Bold" }}>
+                          {selectedClient?.LastName}
                         </td>
+                        <td style={{ fontFamily: "Bold" }}>
+                          {selectedProduct?.name}
+                        </td>
+                        <td style={{ fontFamily: "Bold" }}>
+                          {product.cantidad}
+                        </td>
+                        <td style={{ fontFamily: "Bold" }}>
+                          ${totalPrice.toFixed(2)}
+                        </td>
+                        <th>
+                          <div
+                            className="ContainerItem"
+                            style={{
+                              position: "relative",
+                              left: "20%",
+                              width: "300px",
+                              display: "flex",
+                            }}
+                          >
+                            <ButtonSend
+                              onClick={() => handleEditProduct(product)}
+                            >
+                              Editar
+                            </ButtonSend>
+                            <ButtonSend
+                              onClick={() => handleDeleteProduct(product.id)}
+                              key={`delete-${product.id}`}
+                            >
+                              Eliminar
+                            </ButtonSend>
+                          </div>
+                        </th>
                       </tr>
                     );
                   })}
@@ -342,6 +420,82 @@ function VentasRealizadas() {
             </TablaContainer>
           )
         )}
+        <div>
+          <PDFViewer width={600} height={400}>
+            <Document>
+              <Page size="A4" style={styles.page}>
+                <View style={styles.table}>
+                  <View style={styles.row}>
+                    <View style={[styles.cell, styles.headerCell]}>
+                      <Text style={styles.text}>#</Text>
+                    </View>
+                    <View style={[styles.cell, styles.headerCell]}>
+                      <Text style={styles.text}>Cliente</Text>
+                    </View>
+                    <View style={[styles.cell, styles.headerCell]}>
+                      <Text style={styles.text}>Producto</Text>
+                    </View>
+                    <View style={[styles.cell, styles.headerCell]}>
+                      <Text style={styles.text}>Cantidad</Text>
+                    </View>
+                    <View style={[styles.cell, styles.headerCell]}>
+                      <Text style={styles.text}>Precio de Venta</Text>
+                    </View>
+                  </View>
+                  {productList.map((product) => {
+                    const selectedClient = clients.find(
+                      (c) => c.id.toString() === product.cliente
+                    );
+                    const selectedProduct = products.find(
+                      (p) => p.id.toString() === product.producto
+                    );
+                    const totalPrice =
+                      selectedProduct &&
+                      !isNaN(selectedProduct.price) &&
+                      !isNaN(product.cantidad)
+                        ? selectedProduct.price * product.cantidad
+                        : 0;
+
+                    return (
+                      <View style={styles.row} key={product.id}>
+                        <View style={styles.cell}>
+                          <Text style={styles.text}>{product.id}</Text>
+                        </View>
+                        <View style={styles.cell}>
+                          <Text style={styles.text}>
+                            {selectedClient?.LastName}
+                          </Text>
+                        </View>
+                        <View style={styles.cell}>
+                          <Text style={styles.text}>
+                            {selectedProduct?.name}
+                          </Text>
+                        </View>
+                        <View style={styles.cell}>
+                          <Text style={styles.text}>{product.cantidad}</Text>
+                        </View>
+                        <View style={styles.cell}>
+                          <Text style={styles.text}>
+                            ${totalPrice.toFixed(2)}
+                          </Text>
+                        </View>
+                      </View>
+                    );
+                  })}
+                  <View
+                    style={{
+                      textAlign: "right",
+                      marginTop: 20,
+                      marginRight: 20,
+                    }}
+                  >
+                    <Text>Total: ${calculateTotalPrice().toFixed(2)}</Text>
+                  </View>
+                </View>
+              </Page>
+            </Document>
+          </PDFViewer>
+        </div>
       </Section>
     </div>
   );

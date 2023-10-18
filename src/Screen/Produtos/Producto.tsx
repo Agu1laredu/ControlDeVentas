@@ -69,6 +69,13 @@ const TablaContainer = styled.div`
   padding: 20px;
 `;
 
+const Loading = styled.div`
+  background-color: #646cff;
+  width: 30%;
+  margin: auto;
+  height: 30%;
+  border-radius: 50%;
+`;
 interface Product {
   id: number;
   name: string;
@@ -256,13 +263,13 @@ function Productos() {
     >
       <Sidebar />
       <Section>
-        <h1>PRODUCTOS</h1>
+        <h1 style={{ fontFamily: "Bold" }}>PRODUCTOS</h1>
 
         {/* Formulario para agregar/editar productos */}
         <Formproduct onSubmit={handleFormSubmit}>
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="name">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Producto :</b>
+              <b style={{ fontSize: 20, fontFamily: "Bold" }}> Producto :</b>
             </label>
             <input
               type="text"
@@ -274,7 +281,7 @@ function Productos() {
 
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="Talle">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Talle :</b>
+              <b style={{ fontSize: 20, fontFamily: "Bold" }}> Talle :</b>
             </label>
             <input
               type="text"
@@ -285,7 +292,7 @@ function Productos() {
           </div>
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="price">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Precio :</b>
+              <b style={{ fontSize: 20, fontFamily: "Bold" }}> Precio :</b>
             </label>
             <input
               type="number"
@@ -304,12 +311,23 @@ function Productos() {
         {/* Mostrar los productos agregados */}
 
         {isLoading ? (
-          <div>
-            <section style={{ margin: "100px auto", textAlign: "center" }}>
-              <h4>CARGANDO DATOS</h4>
-              <p>ESPERA UN MOMENTO</p>
-            </section>
-          </div>
+          <Loading>
+            <h4
+              style={{
+                textAlign: "center",
+                paddingTop: 60,
+                fontSize: 40,
+                fontFamily: "Bold",
+              }}
+            >
+              CARGANDO DATOS
+            </h4>
+            <p
+              style={{ textAlign: "center", fontSize: 20, fontFamily: "Bold" }}
+            >
+              ESPERA UN MOMENTO
+            </p>
+          </Loading>
         ) : (
           productList.map((product) => (
             <TablaContainer key={product.id}>
