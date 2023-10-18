@@ -335,14 +335,31 @@ function Productos() {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <td style={{ width: "100px", fontSize: 20 }}>
+                    <td
+                      style={{
+                        width: "100px",
+                        fontSize: 20,
+                        fontFamily: "Bold",
+                      }}
+                    >
                       {product.name}
                     </td>
-                    <td style={{ width: "100px", fontSize: 20 }}>
+                    <td
+                      style={{
+                        width: "100px",
+                        fontSize: 20,
+                        fontFamily: "Bold",
+                      }}
+                    >
                       {product.Talle}
                     </td>
                     <td
-                      style={{ width: "100px", fontSize: 20, color: "green" }}
+                      style={{
+                        width: "100px",
+                        fontSize: 20,
+                        color: "green",
+                        fontFamily: "Bold",
+                      }}
                     >
                       ${product.price}
                     </td>

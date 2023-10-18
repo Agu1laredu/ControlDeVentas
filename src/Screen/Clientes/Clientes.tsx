@@ -66,7 +66,13 @@ const TablaContainer = styled.div`
   width: 100%;
   padding: 20px;
 `;
-
+const Loading = styled.div`
+  background-color: #646cff;
+  width: 30%;
+  margin: auto;
+  height: 30%;
+  border-radius: 50%;
+`;
 interface Clients {
   id: number;
   LastName: string;
@@ -266,7 +272,7 @@ function ClientsCode() {
         <Formproduct onSubmit={handleFormSubmit}>
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="LastName">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Nombre : </b>
+              <b style={{ fontSize: 20, fontFamily: "Bold" }}> Nombre : </b>
             </label>
             <input
               type="text"
@@ -278,7 +284,7 @@ function ClientsCode() {
 
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="Apellido">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Apellido : </b>
+              <b style={{ fontSize: 20, fontFamily: "Bold" }}> Apellido : </b>
             </label>
             <input
               type="text"
@@ -289,7 +295,7 @@ function ClientsCode() {
           </div>
           <div style={{ textAlign: "center", margin: "auto 2px" }}>
             <label htmlFor="Telefono">
-              <b style={{ fontSize: 20, fontWeight: "bold" }}> Telefono : </b>
+              <b style={{ fontSize: 20, fontFamily: "Bold" }}> Telefono : </b>
             </label>
             <input
               type="number"
@@ -306,12 +312,23 @@ function ClientsCode() {
 
         {/* Mostrar los productos agregados */}
         {isLoading ? (
-          <div>
-            <section style={{ margin: "100px auto", textAlign: "center" }}>
-              <h4>CARGANDO DATOS</h4>
-              <p>ESPERA UN MOMENTO</p>
-            </section>
-          </div>
+          <Loading>
+            <h4
+              style={{
+                textAlign: "center",
+                paddingTop: 60,
+                fontSize: 40,
+                fontFamily: "Bold",
+              }}
+            >
+              CARGANDO DATOS
+            </h4>
+            <p
+              style={{ textAlign: "center", fontSize: 20, fontFamily: "Bold" }}
+            >
+              ESPERA UN MOMENTO
+            </p>
+          </Loading>
         ) : (
           clientList.map((clients) => (
             <TablaContainer key={clients.id}>
@@ -319,13 +336,31 @@ function ClientsCode() {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <td style={{ width: "100px", fontSize: 20 }}>
+                    <td
+                      style={{
+                        width: "100px",
+                        fontSize: 20,
+                        fontFamily: "Bold",
+                      }}
+                    >
                       {clients.LastName}
                     </td>
-                    <td style={{ width: "100px", fontSize: 20 }}>
+                    <td
+                      style={{
+                        width: "100px",
+                        fontSize: 20,
+                        fontFamily: "Bold",
+                      }}
+                    >
                       {clients.Apellido}
                     </td>
-                    <td style={{ width: "100px", fontSize: 20 }}>
+                    <td
+                      style={{
+                        width: "100px",
+                        fontSize: 20,
+                        fontFamily: "Bold",
+                      }}
+                    >
                       {clients.Telefono}
                     </td>
                     <th>

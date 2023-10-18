@@ -4,6 +4,7 @@ import Table from "react-bootstrap/Table";
 import ButtonSend from "../../Components/Button/Button";
 import styled from "styled-components";
 import useForceUpdate from "./Components/forceUpdate";
+import Logo from "../../assets/LogoVentas.png";
 import { client } from "../../supabase/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
@@ -13,6 +14,7 @@ import {
   Text,
   View,
   StyleSheet,
+  Image,
 } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
@@ -47,6 +49,15 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
+  },
+  logo: {
+    position: "relative",
+    top: "10px",
+    left: "10px",
+    backgroundSize: "cover",
+    width: "20%", // Ancho de la imagen
+    height: "10%",
+    // Altura de la imagen
   },
 });
 
@@ -108,6 +119,14 @@ const TablaContainer = styled.div`
   width: 100%;
   padding: 20px;
   border-radius: 20px;
+`;
+
+const Loading = styled.div`
+  background-color: #646cff;
+  width: 30%;
+  margin: auto;
+  height: 30%;
+  border-radius: 50%;
 `;
 
 interface Ventas {
@@ -337,12 +356,23 @@ function VentasRealizadas() {
         </FormVenta>
 
         {isLoading ? (
-          <div>
-            <section style={{ margin: "100px auto", textAlign: "center" }}>
-              <h4>CARGANDO DATOS</h4>
-              <p>ESPERA UN MOMENTO</p>
-            </section>
-          </div>
+          <Loading>
+            <h4
+              style={{
+                textAlign: "center",
+                paddingTop: 60,
+                fontSize: 40,
+                fontFamily: "Bold",
+              }}
+            >
+              CARGANDO DATOS
+            </h4>
+            <p
+              style={{ textAlign: "center", fontSize: 20, fontFamily: "Bold" }}
+            >
+              ESPERA UN MOMENTO
+            </p>
+          </Loading>
         ) : (
           productList.length > 0 && (
             <TablaContainer>
@@ -425,6 +455,21 @@ function VentasRealizadas() {
             <Document>
               <Page size="A4" style={styles.page}>
                 <View style={styles.table}>
+                  <Image
+                    src={Logo} // Reemplaza con la ruta de tu imagen
+                    style={styles.logo}
+                  />
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      margin: "auto",
+                      top: "-40px",
+                      left: "-175px",
+                      position: "relative",
+                    }}
+                  >
+                    CONTROL DE VENTAS
+                  </Text>
                   <View style={styles.row}>
                     <View style={[styles.cell, styles.headerCell]}>
                       <Text style={styles.text}>#</Text>
@@ -482,14 +527,10 @@ function VentasRealizadas() {
                       </View>
                     );
                   })}
-                  <View
-                    style={{
-                      textAlign: "right",
-                      marginTop: 20,
-                      marginRight: 20,
-                    }}
-                  >
-                    <Text>Total: ${calculateTotalPrice().toFixed(2)}</Text>
+                  <View style={styles.cell}>
+                    <Text style={{ marginTop: "20px", marginBottom: "20px" }}>
+                      Total: ${calculateTotalPrice().toFixed(2)}
+                    </Text>
                   </View>
                 </View>
               </Page>
