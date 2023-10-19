@@ -2,9 +2,9 @@ import styled from "styled-components";
 import React from "react";
 
 const StyledButton = styled.button`
-  width: 100px;
-  margin: 20px auto;
+  margin-left: 100px;
   border-radius: 8px;
+  width: 200px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
@@ -20,6 +20,13 @@ const StyledButton = styled.button`
   :focus,
   :focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
+  }
+  @media (max-width: 700px) {
+    width: 100%;
+    margin: auto;
+    position: relative;
+    left: -50%;
+    top: 20%;
   }
 `;
 

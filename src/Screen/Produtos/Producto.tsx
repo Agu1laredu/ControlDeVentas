@@ -335,9 +335,15 @@ function Productos() {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Cliente</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                  </tr>
+                  <tr>
+                    <th>#</th>
                     <td
                       style={{
-                        width: "100px",
+                        width: "200px",
                         fontSize: 20,
                         fontFamily: "Bold",
                       }}
@@ -346,7 +352,7 @@ function Productos() {
                     </td>
                     <td
                       style={{
-                        width: "100px",
+                        width: "200px",
                         fontSize: 20,
                         fontFamily: "Bold",
                       }}
@@ -355,7 +361,7 @@ function Productos() {
                     </td>
                     <td
                       style={{
-                        width: "100px",
+                        width: "200px",
                         fontSize: 20,
                         color: "green",
                         fontFamily: "Bold",
@@ -363,27 +369,17 @@ function Productos() {
                     >
                       ${product.price}
                     </td>
-                    <th>
-                      <div
-                        className="ContainerItem"
-                        style={{
-                          position: "relative",
-                          left: "20%",
-                          width: "300px",
-                          display: "flex",
-                        }}
+                    <td>
+                      <ButtonSend onClick={() => handleEditProduct(product)}>
+                        Editar
+                      </ButtonSend>
+                      <ButtonSend
+                        onClick={() => handleDeleteProduct(product.id)}
+                        key={`delete-${product.id}`}
                       >
-                        <ButtonSend onClick={() => handleEditProduct(product)}>
-                          Editar
-                        </ButtonSend>
-                        <ButtonSend
-                          onClick={() => handleDeleteProduct(product.id)}
-                          key={`delete-${product.id}`}
-                        >
-                          Eliminar
-                        </ButtonSend>
-                      </div>
-                    </th>
+                        Eliminar
+                      </ButtonSend>
+                    </td>
                   </tr>
                 </thead>
               </Table>

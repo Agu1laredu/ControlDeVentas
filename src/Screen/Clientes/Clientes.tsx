@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
-import ButtonSend from "../../Components/Button/Button";
+import Button from "../../Components/Button/Button";
 import styled from "styled-components";
 import { client } from "../../supabase/client";
 
@@ -336,6 +336,12 @@ function ClientsCode() {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Cliente</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                  </tr>
+                  <tr>
+                    <th>#</th>
                     <td
                       style={{
                         width: "100px",
@@ -363,26 +369,14 @@ function ClientsCode() {
                     >
                       {clients.Telefono}
                     </td>
-                    <th>
-                      <div
-                        className="ContainerItem"
-                        style={{
-                          position: "relative",
-                          left: "20%",
-                          width: "300px",
-                          display: "flex",
-                        }}
-                      >
-                        <ButtonSend onClick={() => handleEditClient(clients)}>
-                          Editar
-                        </ButtonSend>
-                        <ButtonSend
-                          onClick={() => handleDeleteProduct(clients.id)}
-                        >
-                          Eliminar
-                        </ButtonSend>
-                      </div>
-                    </th>
+                    <td>
+                      <Button onClick={() => handleEditClient(clients)}>
+                        Editar
+                      </Button>
+                      <Button onClick={() => handleDeleteProduct(clients.id)}>
+                        Eliminar
+                      </Button>
+                    </td>
                   </tr>
                 </thead>
               </Table>
