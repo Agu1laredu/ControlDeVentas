@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../Components/SideBar/Sidebar";
 import Table from "react-bootstrap/Table";
@@ -55,9 +56,8 @@ const styles = StyleSheet.create({
     top: "10px",
     left: "10px",
     backgroundSize: "cover",
-    width: "20%", // Ancho de la imagen
+    width: "20%",
     height: "10%",
-    // Altura de la imagen
   },
 });
 
@@ -135,6 +135,7 @@ interface Ventas {
   producto: string;
   cantidad: number;
   price: number; // Agregamos la columna "price"
+  created_at: string; // Agregamos la columna "created_at"
 }
 
 interface Product {
@@ -162,14 +163,14 @@ function VentasRealizadas() {
 
   const tableRef = useRef(null);
 
-  const forceUpdate = useForceUpdate(); // Importa useForceUpdate de alguna fuente o crea tu propia función
+  const forceUpdate = useForceUpdate();
 
   const fetchVentas = async () => {
     try {
       const ventasResponse = await client.from("Ventas").select("*");
       if (!ventasResponse.error) {
         setProductList(ventasResponse.data);
-        forceUpdate(); // Forzar actualización
+        forceUpdate();
       }
     } catch (error) {
       console.error("Error fetching ventas:", error);
@@ -189,7 +190,7 @@ function VentasRealizadas() {
           setProducts(productsResponse.data);
         }
 
-        await fetchVentas(); // Cargar ventas al inicio
+        await fetchVentas();
 
         setIsLoading(false);
       } catch (error) {
@@ -198,7 +199,6 @@ function VentasRealizadas() {
     };
 
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -209,7 +209,6 @@ function VentasRealizadas() {
     const cantidad = parseFloat(String(formData.get("Cantidad")));
     const producto = String(formData.get("producto"));
 
-    // Buscar el producto seleccionado
     const selectedProduct = products.find((p) => p.id.toString() === producto);
 
     if (selectedProduct) {
@@ -220,7 +219,7 @@ function VentasRealizadas() {
             cliente,
             producto,
             cantidad,
-            price: totalPrice, // Almacenar el precio total
+            price: totalPrice,
           },
         ]);
 
@@ -228,14 +227,12 @@ function VentasRealizadas() {
 
         if (result.data) {
           if (Array.isArray(result.data)) {
-            // Asegurarse de que cada elemento de la lista tenga un precio definido
             (result.data as Ventas[]).forEach((item) => {
               item.price = selectedProduct.price * item.cantidad;
             });
 
             setProductList([...productList, ...(result.data as Ventas[])]);
           } else {
-            // Asegurarse de que el elemento tenga un precio definido
             (result.data as Ventas).price =
               selectedProduct.price * (result.data as Ventas).cantidad;
 
@@ -384,6 +381,7 @@ function VentasRealizadas() {
                     <th>Producto</th>
                     <th>Cantidad</th>
                     <th>Precio de Venta</th>
+                    <th>Fecha de Creación</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -416,7 +414,12 @@ function VentasRealizadas() {
                         <td style={{ fontFamily: "Bold" }}>
                           ${totalPrice.toFixed(2)}
                         </td>
-                        <th>
+                        <td style={{ fontFamily: "Bold" }}>
+                          <p>
+                            {new Date(product.created_at).toLocaleDateString()}
+                          </p>
+                        </td>
+                        <td>
                           <div
                             className="ContainerItem"
                             style={{
@@ -438,7 +441,7 @@ function VentasRealizadas() {
                               Eliminar
                             </ButtonSend>
                           </div>
-                        </th>
+                        </td>
                       </tr>
                     );
                   })}
@@ -455,10 +458,7 @@ function VentasRealizadas() {
             <Document>
               <Page size="A4" style={styles.page}>
                 <View style={styles.table}>
-                  <Image
-                    src={Logo} // Reemplaza con la ruta de tu imagen
-                    style={styles.logo}
-                  />
+                  <Image src={Logo} style={styles.logo} />
                   <Text
                     style={{
                       textAlign: "center",
@@ -485,6 +485,10 @@ function VentasRealizadas() {
                     </View>
                     <View style={[styles.cell, styles.headerCell]}>
                       <Text style={styles.text}>Precio de Venta</Text>
+                    </View>
+                    <View style={[styles.cell, styles.headerCell]}>
+                      <Text style={styles.text}>Fecha de Creación</Text>{" "}
+                      {/* Agregamos la columna de fecha */}
                     </View>
                   </View>
                   {productList.map((product) => {
@@ -522,6 +526,12 @@ function VentasRealizadas() {
                         <View style={styles.cell}>
                           <Text style={styles.text}>
                             ${totalPrice.toFixed(2)}
+                          </Text>
+                        </View>
+                        <View style={styles.cell}>
+                          <Text style={styles.text}>
+                            {new Date(product.created_at).toLocaleDateString()}{" "}
+                            {/* Formatear la fecha */}
                           </Text>
                         </View>
                       </View>
