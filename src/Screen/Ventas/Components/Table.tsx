@@ -40,6 +40,20 @@ const SalesTable: React.FC<SalesTableProps> = ({
   onEditProduct,
   onDeleteProduct,
 }) => {
+  const calculateTotalPrice = () => {
+    let totalPrice = 0;
+    sales.forEach((product) => {
+      const selectedProduct = products.find(
+        (p) => p.id.toString() === product.producto
+      );
+      if (selectedProduct) {
+        const price = selectedProduct.price * product.cantidad;
+        totalPrice += price;
+      }
+    });
+    return totalPrice;
+  };
+
   return (
     <Table striped bordered hover>
       <thead>
@@ -49,7 +63,6 @@ const SalesTable: React.FC<SalesTableProps> = ({
           <th>Producto</th>
           <th>Cantidad</th>
           <th>Precio de Venta</th>
-          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -107,6 +120,7 @@ const SalesTable: React.FC<SalesTableProps> = ({
                 style={{
                   fontSize: 20,
                   fontFamily: "Bold",
+                  color: "green",
                 }}
               >
                 ${totalPrice.toFixed(2)}
@@ -124,6 +138,19 @@ const SalesTable: React.FC<SalesTableProps> = ({
           );
         })}
       </tbody>
+      <b
+        style={{
+          position: "absolute",
+          fontSize: 30,
+          right: "10%",
+          bottom: "15%",
+        }}
+      >
+        Total: ${" "}
+        <span style={{ color: "green" }}>
+          {calculateTotalPrice().toFixed(2)}
+        </span>
+      </b>
     </Table>
   );
 };
