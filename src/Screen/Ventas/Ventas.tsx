@@ -7,6 +7,7 @@ import styled from "styled-components";
 import useForceUpdate from "./Components/forceUpdate";
 import PDFDocument from "./Components/PDFDocument";
 import Table from "./Components/Table";
+import Button from "../../Components/Button/Button";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -34,6 +35,7 @@ const Section = styled.section`
 const ButtonEditar = styled.button`
   margin-left: 100px;
   border-radius: 8px;
+  width: 200px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
@@ -46,12 +48,41 @@ const ButtonEditar = styled.button`
   :hover {
     border-color: #646cff;
   }
-
   :focus,
   :focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
   }
+  @media (max-width: 700px) {
+    width: 100%;
+    margin: auto;
+    position: relative;
+    left: -50%;
+    top: 20%;
+  }
+`;
+const ButtonCerraPDF = styled.button`
+  position: relative;
+  border: 1px solid black;
+  top: 50px;
+  left: 50%;
+  border-radius: 8px;
+  width: 200px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #646cff;
+  cursor: pointer;
+  transition: border-color 0.25s;
 
+  :hover {
+    border-color: #646cff;
+  }
+  :focus,
+  :focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
   @media (max-width: 700px) {
     width: 100%;
     margin: auto;
@@ -67,6 +98,28 @@ const Loading = styled.div`
   margin: auto;
   height: 30%;
   border-radius: 50%;
+`;
+
+const Modaloverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Fondo semitransparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Coloca el modal encima del contenido */
+`;
+
+const Modaloverlay2 = styled.div`
+  padding: 20px;
+  position: relative;
+  left: -5%;
+  border-radius: 10px;
+  position: relative;
+  z-index: 1001;
 `;
 
 interface Ventas {
@@ -100,6 +153,7 @@ function VentasRealizadas() {
   const [selectedClientId, setSelectedClientId] = useState<string>("");
   const [selectedProductId, setSelectedProductId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
 
   const forceUpdate = useForceUpdate();
 
@@ -202,6 +256,19 @@ function VentasRealizadas() {
     }
   };
 
+  // Manejador para abrir el modal del PDF
+  const openPdfModal = () => {
+    setIsPdfModalOpen(true);
+  };
+
+  // Manejador para cerrar el modal del PDF
+  const closePdfModal = () => {
+    setIsPdfModalOpen(false);
+  };
+
+  // Nuevo botón para abrir el modal del PDF
+  const openPdfButton = <Button onClick={openPdfModal}>Ver PDF</Button>;
+
   return (
     <div
       style={{
@@ -268,11 +335,28 @@ function VentasRealizadas() {
             />
           </div>
 
-          <ButtonEditar type="submit">
-            {currentProduct ? "Editar Venta" : "Registrar Venta"}
-          </ButtonEditar>
+          <div>
+            <ButtonEditar type="submit">
+              {currentProduct ? "Editar Venta" : "Registrar Venta"}
+            </ButtonEditar>
+          </div>
+          {/* Botón para abrir el modal del PDF */}
+          {openPdfButton}
         </FormVenta>
-
+        {isPdfModalOpen && (
+          <Modaloverlay className="pdf-modal-overlay">
+            <Modaloverlay2 className="pdf-modal">
+              <ButtonCerraPDF onClick={closePdfModal}>
+                Cerrar PDF
+              </ButtonCerraPDF>
+              <PDFDocument
+                productList={productList}
+                clients={clients}
+                products={products}
+              />
+            </Modaloverlay2>
+          </Modaloverlay>
+        )}
         {isLoading ? (
           <Loading>
             <h4
@@ -300,13 +384,6 @@ function VentasRealizadas() {
             onDeleteProduct={handleDeleteProduct}
           />
         )}
-        <div>
-          <PDFDocument
-            productList={productList}
-            clients={clients}
-            products={products}
-          />
-        </div>
       </Section>
     </div>
   );

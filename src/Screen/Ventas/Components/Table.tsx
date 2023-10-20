@@ -41,7 +41,7 @@ const SalesTable: React.FC<SalesTableProps> = ({
   onDeleteProduct,
 }) => {
   return (
-    <Table>
+    <Table striped bordered hover>
       <thead>
         <tr>
           <th>#</th>
